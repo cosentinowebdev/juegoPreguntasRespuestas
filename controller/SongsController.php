@@ -10,8 +10,9 @@ class SongsController {
     }
 
     public function list() {
-        $data["canciones"] = $this->songsModel->getSongs();
-        $this->renderer->render("songs", $data);
+        // $data["canciones"] = $this->songsModel->getSongs();
+        $data["estado"] = "true";
+        $this->renderer->render("songs",$data);
     }
 
     public function add(){

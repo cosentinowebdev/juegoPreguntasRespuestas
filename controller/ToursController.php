@@ -10,7 +10,9 @@ class ToursController {
     }
 
     public function list() {
-        $data["presentaciones"] = $this->toursModel->getTours();
-        $this->renderer->render("tours", $data);
+        // $data["presentaciones"] = $this->toursModel->getTours();
+        $data["estado"] = "true";
+        $isLoggedIn = true;
+        $this->renderer->render("tours", ['isLoggedIn' => $isLoggedIn]);
     }
 }

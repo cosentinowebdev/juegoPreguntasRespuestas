@@ -1,24 +1,24 @@
--- Creación de la tabla User (Usuario)
 CREATE TABLE User (
-UserID INT PRIMARY KEY,
-FullName VARCHAR(255),
-BirthYear INT,
-Gender VARCHAR(20),
-Country VARCHAR(255),
-City VARCHAR(255),
-Email VARCHAR(255),
-Password VARCHAR(255),
-Username VARCHAR(255),
-ProfilePicture VARCHAR(255),
-AccountStatus VARCHAR(20)
+    UserID INT PRIMARY KEY,
+    FullName VARCHAR(255),
+    BirthYear INT,
+    Gender VARCHAR(20),
+    Country VARCHAR(255),
+    City VARCHAR(255),
+    Email VARCHAR(255),
+    Password VARCHAR(255),
+    Username VARCHAR(255),
+    ProfilePicture VARCHAR(255),
+    AccountStatus VARCHAR(20),
+    Rol VARCHAR(255)
 );
 
 -- Inserción de datos en la tabla User
-INSERT INTO User (UserID, FullName, BirthYear, Gender, Country, City, Email, Password, Username, ProfilePicture, AccountStatus)
-VALUES (1, 'John Doe', 1990, 'Male', 'United States', 'New York', 'johndoe@example.com', 'password123', 'johndoe123', 'profile.jpg', 'Active');
+INSERT INTO User (UserID, FullName, BirthYear, Gender, Country, City, Email, Password, Username, ProfilePicture, AccountStatus,Rol)
+VALUES (1, 'John Doe', 1990, 'Male', 'United States', 'New York', 'johndoe@example.com', 'password123', 'johndoe123', 'profile.jpg', 'Active','user');
 
-INSERT INTO User (UserID, FullName, BirthYear, Gender, Country, City, Email, Password, Username, ProfilePicture, AccountStatus)
-VALUES (2, 'Jane Smith', 1985, 'Female', 'Canada', 'Toronto', 'janesmith@example.com', 'password456', 'janesmith789', 'profile.jpg', 'Active');
+INSERT INTO User (UserID, FullName, BirthYear, Gender, Country, City, Email, Password, Username, ProfilePicture, AccountStatus,Rol)
+VALUES (2, 'Jane Smith', 1985, 'Female', 'Canada', 'Toronto', 'janesmith@example.com', 'password456', 'janesmith789', 'profile.jpg', 'Active','admin');
 
 
 -- Creación de la tabla Game (Juego)

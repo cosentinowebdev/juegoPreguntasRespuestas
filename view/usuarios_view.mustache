@@ -1,0 +1,37 @@
+
+{{> header}}
+
+<div class='w3-container w3-content w3-center w3-padding-64' style='max-width:800px' id='band'>
+    <h2 class='w3-wide'>Usuarios</h2>
+    <table class='w3-table'>
+        <tr>
+            <th>User ID</th>
+            <th>Full Name</th>
+            <th>Birth Year</th>
+            <th>Gender</th>
+            <th>Country</th>
+            <th>City</th>
+            <th>Email</th>
+            <th>Username</th>
+            <th>Profile Picture</th>
+            <th>Account Status</th>
+            <th>Rol</th>
+        </tr>
+        {{#users}}
+        <tr>
+            <td>{{UserID}}</td>
+            <td>{{FullName}}</td>
+            <td>{{BirthYear}}</td>
+            <td>{{Gender}}</td>
+            <td>{{Country}}</td>
+            <td>{{City}}</td>
+            <td>{{Email}}</td>
+            <td>{{Username}}</td>
+            <td>{{ProfilePicture}}</td>
+            <td>{{AccountStatus}}</td>
+            <td>{{Rol}}</td>
+        </tr>
+        {{/users}}
+    </table>
+</div>
+{{> footer}}
