@@ -31,7 +31,8 @@ class LoginController {
             $isLoggedIn = isset($_SESSION['isLoggedIn']) && $_SESSION['isLoggedIn'] === true;
             if ($isLoggedIn) {
                 // $this->renderer->render("inicio",['isLoggedIn' => $isLoggedIn]);
-                header('Location: '."index.php");
+                $baseUrl = dirname($_SERVER['SCRIPT_NAME']);
+                header("Location: $baseUrl/");
                 exit();
             } else {
                 $this->renderer->render("login",['isLoggedIn' => $isLoggedIn]);
@@ -43,6 +44,8 @@ class LoginController {
         
         // Verificar si el nombre de usuario y la contraseña son correctos
         $isValidCredentials = $this->userModel->validateCredentials($username, $password);
+        var_dump($isValidCredentials);
+        exit();
         if ($isValidCredentials) {
             // Iniciar la sesión si aún no está iniciada
             if (session_status() === PHP_SESSION_NONE) {
