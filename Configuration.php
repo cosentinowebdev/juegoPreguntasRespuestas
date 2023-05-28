@@ -12,6 +12,7 @@ include_once('controller/SongsController.php');
 include_once('controller/LaBandaController.php');
 include_once('controller/InicioController.php');
 include_once('controller/LoginController.php');
+include_once('controller/UserController.php');
 
 include_once('third-party/mustache/src/Mustache/Autoloader.php');
 
@@ -34,10 +35,16 @@ class Configuration {
             // new SongsModel($this->getDatabase()),
             new SongsModel(),
             $this->getRenderer());
-    }
+    }    
 
     public function getLaBandaController() {
         return new LaBandaController($this->getRenderer());
+    }
+
+    public function getUserController() {
+        return new UserController(
+            new UserModel($this->getDatabase()),
+            $this->getRenderer());
     }
 
     private function getArrayConfig() {
