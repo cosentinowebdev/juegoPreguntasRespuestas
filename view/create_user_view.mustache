@@ -59,6 +59,11 @@
 
                 <button type="submit" class="btn btn-primary">Register</button>
             </form>
+            {{#error}}
+                <div class="alert alert-danger" role="alert">
+                    El usuario o email ya esta en uso
+                </div>
+            {{/error}}
         </div>
     </div>
 </div>

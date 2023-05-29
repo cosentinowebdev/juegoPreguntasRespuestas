@@ -84,4 +84,32 @@ class UserModel {
             return false; // Error al registrar el usuario
         }
     }
+    public function checkUserExistence($username, $email) {
+        $query = "SELECT * FROM User WHERE Username = ?";
+        $stmt = $this->database->prepare($query);
+        // $stmt->bind_param("ss", $username, $email);
+        $stmt->bind_param("s", $username);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $stmt->close();  
+        
+        var_dump($result->num_rows);     
+        echo($result->num_rows >= 0);
+        if ($result->num_rows >= 0) {
+            return true; // El usuario  ya existe
+        } else {
+            $query = "SELECT * FROM User WHERE Email = ?";
+            $stmt = $this->database->prepare($query);
+            $stmt->bind_param("s", $email);
+            $stmt->execute();
+            $result2 = $stmt->get_result();
+            $stmt->close();
+            var_dump($result2->num_rows);
+            if ($result2->num_rows >= 0) {
+                return true; // El correo ya existe
+            } else {
+                return false; // El usuario o correo electrónico no existe
+            }
+        }
+    }
 }
