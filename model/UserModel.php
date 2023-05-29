@@ -69,4 +69,19 @@ class UserModel {
             exit();
         } 
     }
+    public function registerUser($fullName, $birthYear, $gender, $country, $city, $email, $password, $username, $profilePicture, $accountStatus, $role) {
+        // $hashedPassword = password_hash($password, PASSWORD_DEFAULT); // Hashing the password
+    
+        // Preparar la consulta SQL para insertar un nuevo usuario en la base de datos
+        $query = "INSERT INTO User (FullName, BirthYear, Gender, Country, City, Email, Password, Username, ProfilePicture, AccountStatus, Rol)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $stmt = $this->database->prepare($query);
+        $stmt->bind_param("sisssssssss", $fullName, $birthYear, $gender, $country, $city, $email, $password, $username, $profilePicture, $accountStatus, $role);
+        
+        if ($stmt->execute()) {
+            return true; // Registro exitoso
+        } else {
+            return false; // Error al registrar el usuario
+        }
+    }
 }

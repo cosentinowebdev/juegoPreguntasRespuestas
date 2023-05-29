@@ -8,8 +8,60 @@
 {{/isLoggedIn}}
 <!-- The Band Section -->
 <p>crear usuario</p>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <form action="/user/createUser" method="post" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="fullname" class="form-label">Full Name:</label>
+                    <input type="text" class="form-control" id="fullname" name="fullname" required>
+                </div>
 
+                <div class="mb-3">
+                    <label for="birthyear" class="form-label">Birth Year:</label>
+                    <input type="number" class="form-control" id="birthyear" name="birthyear" required>
+                </div>
 
-<!-- End Page Content -->
+                <div class="mb-3">
+                    <label for="gender" class="form-label">Gender:</label>
+                    <input type="text" class="form-control" id="gender" name="gender" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="country" class="form-label">Country:</label>
+                    <input type="text" class="form-control" id="country" name="country" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="city" class="form-label">City:</label>
+                    <input type="text" class="form-control" id="city" name="city" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email:</label>
+                    <input type="email" class="form-control" id="email" name="email" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password:</label>
+                    <input type="password" class="form-control" id="password" name="password" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="username" class="form-label">Username:</label>
+                    <input type="text" class="form-control" id="username" name="username" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="profilepicture" class="form-label">Profile Picture:</label>
+                    <input type="file" class="form-control" id="profilepicture" name="profilepicture" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Register</button>
+            </form>
+        </div>
+    </div>
+</div>
+
 </div>
 {{> footer}}

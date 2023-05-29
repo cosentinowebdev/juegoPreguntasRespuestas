@@ -1,5 +1,5 @@
 CREATE TABLE User (
-    UserID INT PRIMARY KEY,
+    UserID INT PRIMARY KEY AUTO_INCREMENT,
     FullName VARCHAR(255),
     BirthYear INT,
     Gender VARCHAR(20),
