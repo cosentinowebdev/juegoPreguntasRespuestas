@@ -22,7 +22,7 @@ class UserController {
                 $email = $_POST['email'];
                 $password = $_POST['password'];
                 $username = $_POST['username'];
-                $accountStatus = 'active';
+                $accountStatus = 'inactive';
                 $role = 'user';
                 if (!$this->userModel->checkUserExistence($username, $email)) {
                     // Manejar el archivo cargado
@@ -143,5 +143,21 @@ class UserController {
                 exit();
             }
         
+    }
+    public function activateUser(){
+        // activate_user
+        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+            $userID = $_GET['id'];
+            if($this->userModel->activateUser($userID)){
+                $datos["dato"]=true;
+                $this->renderer->render("activate_user",$datos);
+            }else{
+                $datos["dato"]=false;
+                $this->renderer->render("activate_user",$datos);
+            }
+        }else{
+            $datos["get"]=false;
+            $this->renderer->render("activate_user",$datos);
+        }
     }
 }

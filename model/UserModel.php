@@ -92,10 +92,12 @@ class UserModel {
         $stmt->execute();
         $result = $stmt->get_result();
         $stmt->close();  
-        
+        echo($username);
         var_dump($result->num_rows);     
-        echo($result->num_rows >= 0);
-        if ($result->num_rows >= 0) {
+        echo($result->num_rows > 0);
+        
+        if ($result->num_rows > 0) {
+            exit();
             return true; // El usuario  ya existe
         } else {
             $query = "SELECT * FROM User WHERE Email = ?";
@@ -105,11 +107,25 @@ class UserModel {
             $result2 = $stmt->get_result();
             $stmt->close();
             var_dump($result2->num_rows);
-            if ($result2->num_rows >= 0) {
+            if ($result2->num_rows > 0) {
+                exit();
                 return true; // El correo ya existe
             } else {
                 return false; // El usuario o correo electrónico no existe
             }
         }
+    }
+    public function activateUser($userID) {
+        $query = "UPDATE User SET AccountStatus = 'active' WHERE UserID = ?";
+        $stmt = $this->database->prepare($query);
+        $stmt->bind_param("i", $userID);
+        // $stmt->execute();
+        if ($stmt->execute()) {
+            $stmt->close();
+            return true; // Registro exitoso
+        } else {
+            return false; // Error al registrar el usuario
+        }
+        
     }
 }
