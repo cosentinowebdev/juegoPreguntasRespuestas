@@ -92,12 +92,12 @@ class UserModel {
         $stmt->execute();
         $result = $stmt->get_result();
         $stmt->close();  
-        echo($username);
-        var_dump($result->num_rows);     
-        echo($result->num_rows > 0);
+        // echo($username);
+        // var_dump($result->num_rows);     
+        // echo($result->num_rows > 0);
         
         if ($result->num_rows > 0) {
-            exit();
+            // exit();
             return true; // El usuario  ya existe
         } else {
             $query = "SELECT * FROM User WHERE Email = ?";
@@ -106,9 +106,9 @@ class UserModel {
             $stmt->execute();
             $result2 = $stmt->get_result();
             $stmt->close();
-            var_dump($result2->num_rows);
+            // var_dump($result2->num_rows);
             if ($result2->num_rows > 0) {
-                exit();
+                // exit();
                 return true; // El correo ya existe
             } else {
                 return false; // El usuario o correo electrónico no existe
