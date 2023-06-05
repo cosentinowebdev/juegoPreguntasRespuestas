@@ -113,6 +113,42 @@ class UserController {
         }
 
     }
+    public function showUser() {
+        // Verificar si el usuario está logueado
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        // Obtener el ID del usuario actual almacenado en la sesión
+        $loggedInUserId = isset($_SESSION['userId']) ? $_SESSION['userId'] : null;
+
+        // Obtener el ID del usuario especificado en el parámetro GET
+        $requestedUserId = isset($_GET['id']) ? $_GET['id'] : null;
+
+        // Determinar si se debe mostrar el usuario actual o un usuario específico
+        if ($loggedInUserId && !$requestedUserId) {
+            // Mostrar el usuario actual
+            $userData = $this->userModel->getUserById($loggedInUserId);
+        } elseif ($requestedUserId) {
+            // Mostrar un usuario específico
+            $userData = $this->userModel->getUserById($requestedUserId);
+        } else {
+            // No se especificó ningún ID de usuario, redirigir o mostrar un mensaje de error
+            $baseUrl = dirname($_SERVER['SCRIPT_NAME']);
+            header("Location: $baseUrl");
+            exit();
+        }
+
+        if (!$userData) {
+            // Si no se encuentra el usuario, redirigir o mostrar un mensaje de error
+            $baseUrl = dirname($_SERVER['SCRIPT_NAME']);
+            header("Location: $baseUrl");
+            exit();
+        }
+
+        // Renderizar la vista del usuario
+        $this->renderer->render('user', ['userData' => $userData]);
+    }
     public function list() {
         $data["users"] = $this->userModel->getUser();
         $this->renderer->render("usuarios",$data);
@@ -137,8 +173,6 @@ class UserController {
 
                 // Redireccionar al usuario a la página de inicio
                 $baseUrl = dirname($_SERVER['SCRIPT_NAME']);
-                // echo $baseUrl;
-                // exit();
                 header("Location: $baseUrl");
                 exit();
             }

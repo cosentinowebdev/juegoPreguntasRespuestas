@@ -8,16 +8,8 @@ class LoginController {
         $this->userModel = $userModel;
         $this->renderer = $renderer;
     }
-    // public function __construct($renderer) {
-    //     $this->renderer = $renderer;
-    // }
     public function list() {
-        // $data["users"] = $this->userModel->getUser();
-        // $this->renderer->render("usuarios",$data);
-        // Redireccionar al usuario a la página de inicio
         $baseUrl = dirname($_SERVER['SCRIPT_NAME']);
-        // echo $baseUrl;
-        // exit();
         header("Location: $baseUrl");
         exit();
     }
@@ -30,18 +22,7 @@ class LoginController {
 
             // Autenticar las credenciales del usuario
             if ($autenticate['isLoggedIn']!=false) {
-                // Las credenciales son válidas
-                // $hash = md5(time());
-                // $archivo = 'seguridad.txt';
-                // if (!file_exists($archivo)) {
-                //     $contenido = ''; // Puedes definir un contenido inicial si lo deseas
-                //     file_put_contents($archivo, $contenido);
-                // }
-                // $content = $hash . ':' . $autenticate['user'];
-                // file_put_contents($archivo, $content);
-                // Establecer la cookie
                 $cookieName = 'isLoggedIn';
-                // $cookieValue = $hash;
                 $cookieValue = $autenticate['isLoggedIn'];
                 $cookieExpiration = time() + 3600; // Expire en 1 hora
                 setcookie($cookieName, $cookieValue, $cookieExpiration, '/');
@@ -49,11 +30,8 @@ class LoginController {
                 // Redireccionar al usuario a la página de inicio
                 $baseUrl = dirname($_SERVER['SCRIPT_NAME']);
                 $baseUrl=$baseUrl."user/lobby";
-                // echo $baseUrl;
-                // exit();
                 header("Location: $baseUrl");
                 exit();
-                // $this->renderer->render("lobby_usuario",['falopa' => true]);
 
             } else {
                 // Las credenciales no son válidas
@@ -118,6 +96,8 @@ class LoginController {
             // Establecer la variable de sesión para indicar que el usuario está logueado
             $data['isLoggedIn'] = true;
             $_SESSION['isLoggedIn'] = true;
+            // Establecer el ID del usuario en la sesión
+            $_SESSION['userId'] = $credentials['UserID'];
             $data['user']=$credentials;
             return $data;
 

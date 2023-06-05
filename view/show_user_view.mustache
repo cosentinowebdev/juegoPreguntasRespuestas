@@ -1,0 +1,30 @@
+{{#isLoggedIn}}
+    {{> header_loged}}
+    <p>Sesión iniciada.</p>
+{{/isLoggedIn}}
+{{^isLoggedIn}}
+    {{> header}}
+    <p>Por favor, inicie sesión.</p>
+{{/isLoggedIn}}
+
+{{#userData}}
+    <!-- The User Section -->
+    <div>
+        <h2>{{FullName}}</h2>
+        <p>Año de nacimiento: {{BirthYear}}</p>
+        <p>Género: {{Gender}}</p>
+        <p>País: {{Country}}</p>
+        <p>Ciudad: {{City}}</p>
+        <p>Email: {{Email}}</p>
+        <p>Nombre de usuario: {{Username}}</p>
+        <p>Foto de perfil: {{ProfilePicture}}</p>
+        <p>Estado de la cuenta: {{AccountStatus}}</p>
+        <p>Rol: {{Rol}}</p>
+    </div>
+    <!-- End User Section -->
+{{/userData}}
+
+
+<!-- End Page Content -->
+</div>
+{{> footer}}

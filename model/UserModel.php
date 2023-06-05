@@ -14,6 +14,17 @@ class UserModel {
     public function getUser() {
         return $this->database->query('SELECT * FROM User');
     }
+    public function getUserById($userId) {
+        $sql = "SELECT * FROM User WHERE UserID = :userId";
+        $params = array(':userId' => $userId);
+        $result = $this->database->query($sql, $params);
+
+        if (!empty($result)) {
+            return $result[0];
+        } else {
+            return null;
+        }
+    }
     public function validateCredentials($username, $password) {
         $query = "SELECT * FROM User WHERE Username = ?";
         $stmt = $this->database->prepare($query);
