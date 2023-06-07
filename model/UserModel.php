@@ -15,15 +15,31 @@ class UserModel {
         return $this->database->query('SELECT * FROM User');
     }
     public function getUserById($userId) {
-        $sql = "SELECT * FROM User WHERE UserID = :userId";
-        $params = array(':userId' => $userId);
-        $result = $this->database->query($sql, $params);
-
-        if (!empty($result)) {
-            return $result[0];
-        } else {
+        $sql = "SELECT * FROM User WHERE UserID = ?";
+        $stmt = $this->database->prepare($sql);
+        
+        if (!$stmt) {
+            // Error al preparar la consulta
             return null;
         }
+        
+        $stmt->bind_param("s", $userId);
+        
+        if (!$stmt->execute()) {
+            // Error al ejecutar la consulta
+            return null;
+        }
+        
+        $result = $stmt->get_result();
+        
+        if ($result->num_rows === 0) {
+            // No se encontró ningún usuario con el ID proporcionado
+            return null;
+        }
+        
+        $user = $result->fetch_assoc();
+        
+        return $user;
     }
     public function validateCredentials($username, $password) {
         $query = "SELECT * FROM User WHERE Username = ?";

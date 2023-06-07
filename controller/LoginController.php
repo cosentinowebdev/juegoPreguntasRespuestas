@@ -22,10 +22,10 @@ class LoginController {
 
             // Autenticar las credenciales del usuario
             if ($autenticate['isLoggedIn']!=false) {
-                $cookieName = 'isLoggedIn';
-                $cookieValue = $autenticate['isLoggedIn'];
-                $cookieExpiration = time() + 3600; // Expire en 1 hora
-                setcookie($cookieName, $cookieValue, $cookieExpiration, '/');
+                // $cookieName = 'isLoggedIn';
+                // $cookieValue = $autenticate['isLoggedIn'];
+                // $cookieExpiration = time() + 3600; // Expire en 1 hora
+                // setcookie($cookieName, $cookieValue, $cookieExpiration, '/');
 
                 // Redireccionar al usuario a la página de inicio
                 $baseUrl = dirname($_SERVER['SCRIPT_NAME']);
@@ -95,9 +95,7 @@ class LoginController {
             }
             // Establecer la variable de sesión para indicar que el usuario está logueado
             $data['isLoggedIn'] = true;
-            $_SESSION['isLoggedIn'] = true;
             // Establecer el ID del usuario en la sesión
-            $_SESSION['userId'] = $credentials['UserID'];
             $data['user']=$credentials;
             return $data;
 

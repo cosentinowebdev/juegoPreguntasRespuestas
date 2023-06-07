@@ -119,6 +119,7 @@ class UserController {
             session_start();
         }
 
+
         // Obtener el ID del usuario actual almacenado en la sesión
         $loggedInUserId = isset($_SESSION['userId']) ? $_SESSION['userId'] : null;
 
@@ -129,6 +130,7 @@ class UserController {
         if ($loggedInUserId && !$requestedUserId) {
             // Mostrar el usuario actual
             $userData = $this->userModel->getUserById($loggedInUserId);
+
         } elseif ($requestedUserId) {
             // Mostrar un usuario específico
             $userData = $this->userModel->getUserById($requestedUserId);
@@ -145,9 +147,10 @@ class UserController {
             header("Location: $baseUrl");
             exit();
         }
-
+        // var_dump($userData);
+        // exit();
         // Renderizar la vista del usuario
-        $this->renderer->render('user', ['userData' => $userData]);
+        $this->renderer->render('show_user', ['userData' => $userData]);
     }
     public function list() {
         $data["users"] = $this->userModel->getUser();
