@@ -1,5 +1,5 @@
 <?php
-
+require_once 'helpers/qr/qrlib.php';
 class UserModel {
 
     private $database;
@@ -106,10 +106,29 @@ class UserModel {
         $stmt->bind_param("sisssssssss", $fullName, $birthYear, $gender, $country, $city, $email, $password, $username, $profilePicture, $accountStatus, $role);
         
         if ($stmt->execute()) {
+            $userId = $stmt->insert_id;
+            $qrCodeContent = "http://localhost/user/showUser?id=1${$userId}"; // URL a la que se redirigirá al escanear el código QR
+            $tempImagePath = 'temp_qrcode.png';
+            
+            QRcode::png($qrCodeContent, $tempImagePath, QR_ECLEVEL_L, 10);
+            $imageData = file_get_contents($tempImagePath);
+            // Codificar la imagen en base64
+            $qrCodeBase64 = base64_encode($imageData);
+            $this->saveQrCode($userId,$qrCodeBase64);
+            unlink($tempImagePath);
             return true; // Registro exitoso
         } else {
             return false; // Error al registrar el usuario
         }
+    }
+    public function saveQrCode($userId, $qrCodeBase64) {
+        // Preparar la consulta SQL para actualizar el registro del usuario con el código QR en base64
+        $query = "UPDATE User SET QrPicture = ? WHERE UserId = ?";
+        $stmt = $this->database->prepare($query);
+        $stmt->bind_param("si", $qrCodeBase64, $userId);
+        
+        // Ejecutar la consulta
+        return $stmt->execute();
     }
     public function checkUserExistence($username, $email) {
         $query = "SELECT * FROM User WHERE Username = ?";

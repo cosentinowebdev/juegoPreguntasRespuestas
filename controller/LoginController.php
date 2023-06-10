@@ -26,7 +26,11 @@ class LoginController {
                 // $cookieValue = $autenticate['isLoggedIn'];
                 // $cookieExpiration = time() + 3600; // Expire en 1 hora
                 // setcookie($cookieName, $cookieValue, $cookieExpiration, '/');
-
+                // var_dump($autenticate);
+                $_SESSION['isLoggedIn'] = $autenticate['isLoggedIn'];
+                $_SESSION['userId'] = $autenticate['user'];
+                // var_dump($autenticate['user']);
+                // exit();
                 // Redireccionar al usuario a la página de inicio
                 $baseUrl = dirname($_SERVER['SCRIPT_NAME']);
                 $baseUrl=$baseUrl."user/lobby";
@@ -46,6 +50,9 @@ class LoginController {
             // Verificar si el usuario está logeado
             $isLoggedIn = isset($_SESSION['isLoggedIn']) && $_SESSION['isLoggedIn'] === true;
             $data['isLoggedIn']=$isLoggedIn;
+            // var_dump($data);
+            // echo("<br>");
+            // exit();
             // var_dump($data);
             // exit();
             if ($isLoggedIn) {
