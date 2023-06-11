@@ -38,7 +38,6 @@ class UserModel {
         }
         
         $user = $result->fetch_assoc();
-        
         return $user;
     }
     public function validateCredentials($username, $password) {
