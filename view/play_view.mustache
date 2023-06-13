@@ -4,6 +4,69 @@
 
 <!-- The Band Section -->
 <p>play</p>
+    {{#userGame}}
+        {{^isFinishResult}}  
+            {{#question}}
+
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-6 offset-md-3">
+                                <div class="card mt-5">
+                                    <div class="card-header text-white" style="background-color:{{CategoryColor}}">
+                                        Categoría: {{CategoryName}}
+                                    </div>
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{QuestionText}}</h5>
+                                        <form action="/game/play" method="post">
+                                            <ul class="list-group">
+                                                {{#questionAnswers}}
+                                                <li class="list-group-item">
+                                                    <input class="form-check-input" type="radio" name="answer" id="answer{{@index}}" value="{{.}}">
+                                                    <label class="form-check-label" for="answer{{@index}}">{{.}}</label>
+                                                </li>
+                                                {{/questionAnswers}}
+                                            </ul>
+                                            <input type="text" name="id" value="{{QuestionID}}" id="QuestionID" style="display:none">
+                                            <button type="submit" class="btn btn-primary">Responder</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                
+            {{/question}}
+        {{/isFinishResult}}
+
+        
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 offset-md-3 mt-3">
+                <div class="card">
+                    <div class="card-header">
+                        Información de la partida
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group">
+                            <li class="list-group-item"><strong>ID de la partida:</strong> {{GameID}}</li>
+                            <li class="list-group-item"><strong>Estado:</strong> {{Result}}</li>
+                            <li class="list-group-item"><strong>Fecha y hora de inicio:</strong> {{Timestamp}}</li>
+                            <li class="list-group-item"><strong>Número de preguntas:</strong> {{NumQuestions}}</li>
+                            <li class="list-group-item"><strong>Puntuación:</strong> {{Score}}</li>
+                        </ul>
+                    </div>
+                    {{#isFinishResult}} 
+                    <div class="card-footer text-muted">
+                        <a href="/user/lobby" class="btn btn-primary">Ir al lobby</a>
+                    </div>
+                    {{/isFinishResult}}
+                </div>
+            </div>
+        </div>
+    </div>
+    {{/userGame}}
+
 
 <!-- End Page Content -->
 </div>
