@@ -1,0 +1,36 @@
+{{#isLoggedIn}}
+    {{> header_loged}}
+{{/isLoggedIn}}
+
+<!-- The Band Section -->
+
+<div class="container">
+    <div class="row">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Usuario</th>
+                    <th>Total Score</th>
+                    <th>Total Partidas</th>
+                    <th>Perfil</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#userData}}
+                <tr>
+                    <td>{{FullName}}</td>
+                    <td>{{Username}}</td>
+                    <td>{{TotalScore}}</td>
+                    <td>{{TotalWins}}</td>
+                    <td><a href="/user/showUser?id={{UserID}}" class="btn btn-primary">Ver Perfil</a></td>
+                </tr>
+                {{/userData}}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- End Page Content -->
+</div>
+{{> footer}}

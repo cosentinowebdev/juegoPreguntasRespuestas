@@ -175,6 +175,33 @@ class UserController {
             }
         
     }
+    public function ranking() {
+
+        // Iniciar la sesión si aún no está iniciada
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        // Verificar si el usuario está logeado
+        $isLoggedIn = isset($_SESSION['isLoggedIn']) && $_SESSION['isLoggedIn'] === true;
+        $loggedInUserId = isset($_SESSION['userId']) ? $_SESSION['userId'] : null;
+        $usersData = $this->userModel->getUsersRankedByScore();
+        $data["isLoggedIn"]=$isLoggedIn;
+        $data["userData"]= $usersData;
+        if ($isLoggedIn && $usersData) {
+            // var_dump($usersData);
+            // exit();
+            $this->renderer->render("ranking_users", $data);
+
+            // $this->renderer->render("lobby_usuario",['dato' => true]);
+        } else {
+
+            // Redireccionar al usuario a la página de error
+            $baseUrl = dirname($_SERVER['SCRIPT_NAME']);
+            header("Location: $baseUrl");
+            exit();
+        }
+    
+}
     public function activateUser(){
         // activate_user
         if ($_SERVER['REQUEST_METHOD'] === 'GET') {

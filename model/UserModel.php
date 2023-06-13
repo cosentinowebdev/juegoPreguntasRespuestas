@@ -173,4 +173,31 @@ class UserModel {
         }
         
     }
+
+    public function getUsersRankedByScore() {
+        // Generar una consulta SQL para obtener el puntaje total y el total de partidas ganadas agrupados por usuario
+        $sql = "SELECT u.UserID, u.FullName, u.Username, SUM(ug.Score) AS TotalScore, COUNT(CASE WHEN ug.Result = 'finish' THEN 1 END) AS TotalWins
+                FROM User u
+                INNER JOIN UserGames ug ON u.UserID = ug.UserID
+                GROUP BY u.UserID
+                ORDER BY TotalScore DESC";
+
+        // Ejecutar la consulta en la base de datos
+        $result = $this->database->query($sql);
+
+        // Verificar si la consulta se ejecutó correctamente
+        if (!$result) {
+            // Error al ejecutar la consulta
+            return false;
+        }
+
+        // // Obtener los usuarios clasificados por puntaje con sus datos
+        // $users = array();
+        // while ($row = $result->fetch_assoc()) {
+        //     $users[] = $row;
+        // }
+
+        // Devolver los usuarios clasificados por puntaje
+        return $result;
+    }
 }
