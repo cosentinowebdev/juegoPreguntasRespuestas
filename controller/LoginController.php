@@ -19,18 +19,12 @@ class LoginController {
             $username = $_POST['username']; // Obtener el nombre de usuario del formulario
             $password = $_POST['password']; // Obtener la contraseña del formulario
             $autenticate = $this->authenticate($username, $password);
-
+           
             // Autenticar las credenciales del usuario
             if ($autenticate['isLoggedIn']!=false) {
-                // $cookieName = 'isLoggedIn';
-                // $cookieValue = $autenticate['isLoggedIn'];
-                // $cookieExpiration = time() + 3600; // Expire en 1 hora
-                // setcookie($cookieName, $cookieValue, $cookieExpiration, '/');
-                // var_dump($autenticate);
                 $_SESSION['isLoggedIn'] = $autenticate['isLoggedIn'];
-                $_SESSION['userId'] = $autenticate['user'];
-                // var_dump($autenticate['user']);
-                // exit();
+                $_SESSION['userId'] = $autenticate['user']['UserID'];
+                $_SESSION['Rol']=$autenticate['user']['Rol'];
                 // Redireccionar al usuario a la página de inicio
                 $baseUrl = dirname($_SERVER['SCRIPT_NAME']);
                 $baseUrl=$baseUrl."user/lobby";

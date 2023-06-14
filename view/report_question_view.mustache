@@ -1,0 +1,42 @@
+{{#isLoggedIn}}
+    {{> header_loged}}
+{{/isLoggedIn}}
+
+<!-- The Band Section -->
+
+<p> Reportar Pregunta</p>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            {{#resultado}}
+                <h2>Reporte enviado</h2>
+            {{/resultado}}
+            {{^resultado}}
+                {{#question}}
+                <h4>Pregunta:</h4>
+                <p class="mb-3">{{QuestionText}}</p>
+                <p class="mb-3">dificultad {{difficulty}}</p>
+                <ul>
+                    <li>{{CorrectAnswer}}</li>
+                    <li>{{Answer1}}</li>
+                    <li>{{Answer2}}</li>
+                    <li>{{Answer3}}</li>
+                </ul>
+                <form action="/game/reportQuestion" method="post">
+                    <input type="hidden" name="id" value="{{QuestionID}}">
+                    <div class="form-group">
+                        <label for="reportReason">Motivo del reporte:</label>
+                        <textarea class="form-control" name="reportReason" id="reportReason" rows="3" maxlength="255" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Enviar Reporte</button>
+                </form>
+                {{/question}}
+            {{/resultado}}
+        </div>
+    </div>
+</div>
+
+<!-- End Page Content -->
+</div>
+{{> footer}}

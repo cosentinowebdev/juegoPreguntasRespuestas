@@ -66,7 +66,7 @@ class UserModel {
             //     return true; // Las credenciales son válidas
             // }
             if ($password===$storedPassword) {
-                return $userId;
+                return $row;
             }
         }
 

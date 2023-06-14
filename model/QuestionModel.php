@@ -126,4 +126,25 @@ class QuestionModel {
         // Devolver la pregunta
         return $question;
     }
+    public function calculateQuestionDifficulty($questionID) {
+        // Obtener los datos de la pregunta
+        $question = $this->getQuestionById($questionID);
+        $incorrectCount = $question['IncorrectCount'];
+        $correctCount = $question['CorrectCount'];
+    
+        $aux =  $incorrectCount + $correctCount;
+        if ($aux==0) {
+            return "Fácil";
+        }
+         $difficulty= $correctCount / $aux;
+    
+        // Asignar una etiqueta de dificultad según el valor obtenido
+        if ($difficulty < 3) {
+            return "Fácil";
+        } elseif ($difficulty < 7) {
+            return "Normal";
+        } else {
+            return "Difícil";
+        }
+    }
 }

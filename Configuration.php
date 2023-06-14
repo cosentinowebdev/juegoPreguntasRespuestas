@@ -6,6 +6,7 @@ include_once('helpers/Router.php');
 include_once('model/UserModel.php');
 include_once('model/GamesModel.php');
 include_once('model/QuestionModel.php');
+include_once('model/ReportedQuestionModel.php');
 
 include_once('controller/InicioController.php');
 include_once('controller/LoginController.php');
@@ -38,6 +39,9 @@ class Configuration {
                 $this->getDatabase()
             ),
             new QuestionModel(
+                $this->getDatabase()
+            ),
+            new ReportedQuestionModel(
                 $this->getDatabase()
             ),
             $this->getRenderer()
