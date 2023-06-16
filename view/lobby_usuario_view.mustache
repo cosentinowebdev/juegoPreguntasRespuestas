@@ -1,31 +1,99 @@
-{{#isLoggedIn}}
+{{#isUser}}
     {{> header_loged}}
-{{/isLoggedIn}}
-{{#userData}}
-    <!-- The User Section -->
-    <div class="container">
-        <h1>Detalles del usuario</h1>
-        <ul class="list-group">
-            <li class="list-group-item">Nombre completo: {{FullName}}</li>
-        </ul>
-    </div>
-    <!-- End User Section -->
 
-    <!-- User Actions -->
-    <div class="container mt-4">
-        <h2>Acciones de usuario</h2>
-        <div class="row">
-            <div class="col-md-4">
-                <a href="/game/play" class="btn btn-primary">Nueva partida</a>
-            </div>
-            <div class="col-md-4">
-                <a href="/user/ranking" class="btn btn-primary">Ver ranking</a>
-            </div>
-            <div class="col-md-4">
-                <a href="#" class="btn btn-primary">Nueva pregunta</a>
+    {{#userData}}
+        <!-- The User Section -->
+        <div class="container">
+            <h1>Detalles del usuario</h1>
+            <ul class="list-group">
+                <li class="list-group-item">Nombre completo: {{FullName}}</li>
+            </ul>
+        </div>
+        <!-- End User Section -->
+
+        <!-- User Actions -->
+        <div class="container mt-4">
+            <h2>Acciones de usuario</h2>
+            <div class="row">
+                <div class="col-md-4">
+                    <a href="/game/play" class="btn btn-primary">Nueva partida</a>
+                </div>
+                <div class="col-md-4">
+                    <a href="/user/ranking" class="btn btn-primary">Ver ranking</a>
+                </div>
+                <div class="col-md-4">
+                    <a href="/question/create" class="btn btn-primary">Nueva pregunta</a>
+                </div>
             </div>
         </div>
-    </div>
-    <!-- End User Actions -->
-{{/userData}}
+        <!-- End User Actions -->
+    {{/userData}}
+{{/isUser}}
+
+{{#isEditor}}
+    <!-- Contenido específico para el rol de Editor -->
+    {{> header_editor}}
+        {{#userData}}
+        <!-- The User Section -->
+        <div class="container">
+            <h1>Detalles del usuario</h1>
+            <ul class="list-group">
+                <li class="list-group-item">Nombre completo: {{FullName}}</li>
+            </ul>
+        </div>
+        <!-- End User Section -->
+
+        <!-- User Actions -->
+        <div class="container mt-4">
+            <h2>Acciones de usuario</h2>
+            <div class="row">
+                <div class="col-md-4">
+                    <a href="/game/play" class="btn btn-primary">Nueva partida</a>
+                </div>
+                <div class="col-md-4">
+                    <a href="/user/ranking" class="btn btn-primary">Ver ranking</a>
+                </div>
+                <div class="col-md-4">
+                    <a href="/question/create" class="btn btn-primary">Nueva pregunta</a>
+                </div>
+            </div>
+            {{! /question/list }}
+        </div>
+        <!-- End User Actions -->
+    {{/userData}}
+    <!-- ... -->
+{{/isEditor}}
+
+{{#isAdmin}}
+    <!-- Contenido específico para el rol de Admin -->
+    {{> header_admin}}
+        {{#userData}}
+        <!-- The User Section -->
+        <div class="container">
+            <h1>Detalles del usuario</h1>
+            <ul class="list-group">
+                <li class="list-group-item">Nombre completo: {{FullName}}</li>
+            </ul>
+        </div>
+        <!-- End User Section -->
+
+        <!-- User Actions -->
+        <div class="container mt-4">
+            <h2>Acciones de usuario</h2>
+            <div class="row">
+                <div class="col-md-4">
+                    <a href="/game/play" class="btn btn-primary">Nueva partida</a>
+                </div>
+                <div class="col-md-4">
+                    <a href="/user/ranking" class="btn btn-primary">Ver ranking</a>
+                </div>
+                <div class="col-md-4">
+                    <a href="/question/create" class="btn btn-primary">Nueva pregunta</a>
+                </div>
+            </div>
+        </div>
+        <!-- End User Actions -->
+    {{/userData}}
+    <!-- ... -->
+{{/isAdmin}}
 {{> footer}}

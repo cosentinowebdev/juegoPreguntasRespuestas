@@ -19,7 +19,7 @@ class LoginController {
             $username = $_POST['username']; // Obtener el nombre de usuario del formulario
             $password = $_POST['password']; // Obtener la contraseña del formulario
             $autenticate = $this->authenticate($username, $password);
-           
+
             // Autenticar las credenciales del usuario
             if ($autenticate['isLoggedIn']!=false) {
                 $_SESSION['isLoggedIn'] = $autenticate['isLoggedIn'];
@@ -31,6 +31,12 @@ class LoginController {
                 header("Location: $baseUrl");
                 exit();
 
+            }elseif($autenticate['errorData'] || $autenticate['errorActivate']){
+
+                $data['errorData']=$autenticate['errorData'];
+                $data['errorActivate']=$autenticate['errorActivate'];
+                $data['isLoggedIn']=$autenticate['isLoggedIn'];
+                $this->renderer->render("login", $data);
             } else {
                 // Las credenciales no son válidas
                 $this->renderer->render("login", ['isLoggedIn' => false]);
@@ -89,7 +95,7 @@ class LoginController {
         // Verificar si el nombre de usuario y la contraseña son correctos
         $credentials = $this->userModel->validateCredentials($username, $password);
 
-        if ($credentials!=false) {
+        if ($credentials!=false && $credentials['AccountStatus'] == "Active") {
             // Iniciar la sesión si aún no está iniciada
             if (session_status() === PHP_SESSION_NONE) {
                 session_start();
@@ -98,12 +104,20 @@ class LoginController {
             $data['isLoggedIn'] = true;
             // Establecer el ID del usuario en la sesión
             $data['user']=$credentials;
+            $data['errorData'] = false;
+            $data['errorActivate'] = false;
             return $data;
 
-        } else {
+        } elseif($credentials!=false && $credentials['AccountStatus'] == "inactive"){
+            $data['isLoggedIn'] = false;
+            $data['errorActivate'] = true;
+            $data['errorData'] = false;
+            return $data;
+        }else {
             // Las credenciales son incorrectas, mostrar la página de inicio de sesión nuevamente
             $data['isLoggedIn'] = false;
-
+            $data['errorData'] = true;
+            $data['errorActivate'] = false;
             return $data;
         }
     }

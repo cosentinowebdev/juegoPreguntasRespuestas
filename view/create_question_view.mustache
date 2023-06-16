@@ -1,0 +1,58 @@
+{{#isEditor}}
+    {{> header_editor}}
+{{/isEditor}}
+
+{{#isAdmin}}
+    {{> header_admin}}
+{{/isAdmin}}
+    </div>
+    <div class="container">
+      <h1>Crear Pregunta</h1>
+      {{^success}}
+      <form method="POST" action="/question/create">
+        <div class="form-group">
+          <label for="questionText">Texto de la Pregunta:</label>
+          <input type="text" class="form-control" id="questionText" name="questionText" required>
+        </div>
+        <div class="form-group">
+          <label for="correctAnswer">Respuesta Correcta:</label>
+          <input type="text" class="form-control" id="correctAnswer" name="correctAnswer" required>
+        </div>
+        <div class="form-group">
+          <label for="answer1">Respuesta 1:</label>
+          <input type="text" class="form-control" id="answer1" name="answer1" required>
+        </div>
+        <div class="form-group">
+          <label for="answer2">Respuesta 2:</label>
+          <input type="text" class="form-control" id="answer2" name="answer2" required>
+        </div>
+        <div class="form-group">
+          <label for="answer3">Respuesta 3:</label>
+          <input type="text" class="form-control" id="answer3" name="answer3" required>
+        </div>
+        <div class="form-group">
+          <label for="categoryID">Categoría:</label>
+          <select class="form-control" id="categoryID" name="categoryID" required>
+            {{#categories}}
+            <option value="{{CategoryID}}">{{CategoryName}}</option>
+            {{/categories}}
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Crear Pregunta</button>
+      </form>
+      {{/success}}
+      {{#success}}
+            <div class="alert alert-success" role="alert">
+                carga realizada correctamente
+                <br>
+                <a href="/question/list" class="btn btn-primary">Volver</a>
+            </div>
+      {{/success}}
+        {{#errors}}
+            <div class="alert alert-danger" role="alert">
+                {{errors}}
+            </div>
+        {{/errors}}
+    </div>
+
+{{> footer}}

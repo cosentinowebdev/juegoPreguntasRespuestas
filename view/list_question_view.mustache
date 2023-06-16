@@ -1,0 +1,67 @@
+{{#isEditor}}
+    <!-- Contenido específico para el rol de Editor -->
+    {{> header_editor}}
+
+    <div class="container">
+        <h1>Lista de Preguntas</h1>
+        <div class="row">
+            <a class="btn btn-primary col-3" href="/question/list_categories">Categorias</a>
+        </div>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Pregunta</th>
+                <th>Respuesta Correcta</th>
+                <th>Opciones</th>
+            </tr>
+            </thead>
+            <tbody>
+            {{#questionsData}}
+            <tr>
+                <td>{{QuestionID}}</td>
+                <td>{{QuestionText}}</td>
+                <td>{{CorrectAnswer}}</td>
+                <td>{{Options}}</td>
+            </tr>
+            {{/questionsData}}
+            </tbody>
+        </table>
+
+    </div>
+    <!-- contenido -->
+{{/isEditor}}
+
+{{#isAdmin}}
+    <!-- Contenido específico para el rol de Admin -->
+    {{> header_admin}}
+    <div class="container">
+        <h1>Lista de Preguntas</h1>
+        <div class="row">
+            <a class="btn btn-primary col-3" href="/question/list_categories">Categorias</a>
+        </div>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Pregunta</th>
+                <th>Respuesta Correcta</th>
+                <th>Opciones</th>
+            </tr>
+            </thead>
+            <tbody>
+            {{#questionsData}}
+            <tr>
+                <td>{{QuestionID}}</td>
+                <td>{{QuestionText}}</td>
+                <td>{{CorrectAnswer}}</td>
+                <td>{{Options}}</td>
+            </tr>
+            {{/questionsData}}
+            </tbody>
+        </table>
+        
+    </div>
+    <!-- contenido -->
+{{/isAdmin}}
+{{> footer}}

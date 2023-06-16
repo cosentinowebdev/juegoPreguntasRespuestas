@@ -12,6 +12,12 @@ class GameController {
         $this->renderer = $renderer;
         $this->ReportedQuestionModel = $ReportedQuestionModel;
     }
+    public function list(){
+        $baseUrl = dirname($_SERVER['SCRIPT_NAME']);
+        $baseUrl=$baseUrl."game/play";
+        header("Location: $baseUrl ");
+        exit();
+    }
     public function play() {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();

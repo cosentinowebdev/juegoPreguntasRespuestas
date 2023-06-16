@@ -33,9 +33,21 @@ CREATE TABLE Categories (
 -- Inserción de categorías
 INSERT INTO Categories (CategoryID, CategoryName, CategoryColor) VALUES
 (1, 'Programación','#FF0000'),
-(2, 'Historia Argentina','#0000FF');
+(2, 'Historia Argentina','#0000FF'),
+(3, 'Geografia','#00FF00');
 
--- Creación de la tabla Questions (Preguntas)
+
+CREATE TABLE States (
+  StateID INT PRIMARY KEY,
+  StateName VARCHAR(255)
+);
+
+-- Inserción de estados
+INSERT INTO States (StateID, StateName) VALUES
+(1, 'Habilitada'),
+(2, 'Deshabilitada'),
+(3, 'Pendiente');
+
 CREATE TABLE Questions (
   QuestionID INT PRIMARY KEY AUTO_INCREMENT,
   QuestionText VARCHAR(255),
@@ -46,48 +58,61 @@ CREATE TABLE Questions (
   CorrectCount INT,
   IncorrectCount INT,
   CategoryID INT,
-  FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID)
+  StateID INT,
+  FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID),
+  FOREIGN KEY (StateID) REFERENCES States(StateID)
 );
 
 
+
 -- Inserción de preguntas sobre programación
-INSERT INTO Questions (QuestionID, QuestionText, CorrectAnswer, Answer1, Answer2, Answer3, CorrectCount, IncorrectCount, CategoryID) VALUES
-(1, '¿Qué es PHP?', 'Un lenguaje de programación', 'Un sistema operativo', 'Un gestor de bases de datos', 'Un framework', 0, 0, 1),
-(2, '¿Cuál de los siguientes no es un lenguaje de programación?', 'HTML', 'Java', 'Python', 'C++', 0, 0, 1),
-(3, '¿Qué significa CSS?', 'Cascading Style Sheets', 'Common Style Sheets', 'Creative Style Sheets', 'Computer Style Sheets', 0, 0, 1),
-(4, '¿Cuál es el símbolo utilizado para denotar una clase en CSS?', '.', '#', '@', '$', 0, 0, 1),
-(5, '¿Cuál de los siguientes es un lenguaje de programación orientado a objetos?', 'Java', 'SQL', 'HTML', 'CSS', 0, 0, 1),
-(6, '¿Cuál es el resultado de sumar 2 y 3 en el lenguaje de programación JavaScript?', '5', '2', '3', '23', 0, 0, 1),
-(7, '¿Qué es un bucle "for" en programación?', 'Una estructura de control', 'Un tipo de dato', 'Una función', 'Un operador', 0, 0, 1),
-(8, '¿Cuál de los siguientes no es un tipo de dato en JavaScript?', 'Float', 'String', 'Boolean', 'Number', 0, 0, 1),
-(9, '¿Qué significa HTML?', 'Hypertext Markup Language', 'Hyperlink Text Manipulation Language', 'Home Tool Markup Language', 'Hyper Transfer Mode Language', 0, 0, 1),
-(10, '¿Cuál es el resultado de la operación lógica AND entre true y false?', 'false', 'true', 'null', 'undefined', 0, 0, 1),
-(11, '¿Cuál es el resultado de 5 modulo 2?', '1', '2', '0', '5', 0, 0, 1),
-(12, '¿Cuál de los siguientes no es un framework de desarrollo web?', 'Photoshop', 'React', 'Angular', 'Vue', 0, 0, 1),
-(13, '¿Cuál de los siguientes no es un tipo de dato primitivo en Java?', 'String', 'int', 'boolean', 'double', 0, 0, 1),
-(14, '¿Qué significa SQL?', 'Structured Query Language', 'Simple Query Language', 'System Query Language', 'Structured Query Logic', 0, 0, 1),
-(15, '¿Cuál es el resultado de la operación 4 + "4" en JavaScript?', '"44"', '8', 'NaN', '"8"', 0, 0, 1),
-(16, '¿Cuál de los siguientes es un sistema operativo de código abierto?', 'Linux', 'Windows', 'MacOS', 'iOS', 0, 0, 1),
-(17, '¿Qué es un repositorio en el contexto de Git?', 'Un lugar donde se almacenan los archivos de un proyecto', 'Una función que permite realizar cálculos', 'Una estructura de control', 'Una biblioteca de funciones', 0, 0, 1),
-(18, '¿Cuál de los siguientes no es un tipo de dato en PHP?', 'Void', 'String', 'Integer', 'Boolean', 0, 0, 1),
-(19, '¿Qué significa API?', 'Application Programming Interface', 'Automated Program Interaction', 'Advanced Program Instructions', 'Application Performance Index', 0, 0, 1),
-(20, '¿Cuál de los siguientes es un lenguaje de programación interpretado?', 'Python', 'C++', 'Java', 'C#', 0, 0, 1);
+INSERT INTO Questions (QuestionID, QuestionText, CorrectAnswer, Answer1, Answer2, Answer3, CorrectCount, IncorrectCount, CategoryID, StateID) VALUES
+(1, '¿Qué es PHP?', 'Un lenguaje de programación', 'Un sistema operativo', 'Un gestor de bases de datos', 'Un framework', 0, 0, 1, 1),
+(2, '¿Cuál de los siguientes no es un lenguaje de programación?', 'HTML', 'Java', 'Python', 'C++', 0, 0, 1, 1),
+(3, '¿Qué significa CSS?', 'Cascading Style Sheets', 'Common Style Sheets', 'Creative Style Sheets', 'Computer Style Sheets', 0, 0, 1, 1),
+(4, '¿Cuál es el símbolo utilizado para denotar una clase en CSS?', '.', '#', '@', '$', 0, 0, 1, 1),
+(5, '¿Cuál de los siguientes es un lenguaje de programación orientado a objetos?', 'Java', 'SQL', 'HTML', 'CSS', 0, 0, 1, 1),
+(6, '¿Cuál es el resultado de sumar 2 y 3 en el lenguaje de programación JavaScript?', '5', '2', '3', '23', 0, 0, 1, 1),
+(7, '¿Qué es un bucle "for" en programación?', 'Una estructura de control', 'Un tipo de dato', 'Una función', 'Un operador', 0, 0, 1, 1),
+(8, '¿Cuál de los siguientes no es un tipo de dato en JavaScript?', 'Float', 'String', 'Boolean', 'Number', 0, 0, 1, 1),
+(9, '¿Qué significa HTML?', 'Hypertext Markup Language', 'Hyperlink Text Manipulation Language', 'Home Tool Markup Language', 'Hyper Transfer Mode Language', 0, 0, 1, 1),
+(10, '¿Cuál es el resultado de la operación lógica AND entre true y false?', 'false', 'true', 'null', 'undefined', 0, 0, 1, 1),
+(11, '¿Cuál es el resultado de 5 modulo 2?', '1', '2', '0', '5', 0, 0, 1, 1),
+(12, '¿Cuál de los siguientes no es un framework de desarrollo web?', 'Photoshop', 'React', 'Angular', 'Vue', 0, 0, 1, 1),
+(13, '¿Cuál de los siguientes no es un tipo de dato primitivo en Java?', 'String', 'int', 'boolean', 'double', 0, 0, 1, 1),
+(14, '¿Qué significa SQL?', 'Structured Query Language', 'Simple Query Language', 'System Query Language', 'Structured Query Logic', 0, 0, 1, 1),
+(15, '¿Cuál es el resultado de la operación 4 + "4" en JavaScript?', '"44"', '8', 'NaN', '"8"', 0, 0, 1, 1),
+(16, '¿Cuál de los siguientes es un sistema operativo de código abierto?', 'Linux', 'Windows', 'MacOS', 'iOS', 0, 0, 1, 1),
+(17, '¿Qué es un repositorio en el contexto de Git?', 'Un lugar donde se almacenan los archivos de un proyecto', 'Una función que permite realizar cálculos', 'Una estructura de control', 'Una biblioteca de funciones', 0, 0, 1, 1),
+(18, '¿Cuál de los siguientes no es un tipo de dato en PHP?', 'Void', 'String', 'Integer', 'Boolean', 0, 0, 1, 1),
+(19, '¿Qué significa API?', 'Application Programming Interface', 'Automated Program Interaction', 'Advanced Program Instructions', 'Application Performance Index', 0, 0, 1, 1),
+(20, '¿Cuál de los siguientes es un lenguaje de programación interpretado?', 'Python', 'C++', 'Java', 'C#', 0, 0, 1, 1);
 
 -- Inserción de preguntas sobre historia argentina
-INSERT INTO Questions (QuestionID, QuestionText, CorrectAnswer, Answer1, Answer2, Answer3, CorrectCount, IncorrectCount, CategoryID) VALUES
-(21, '¿En qué año se produjo la Revolución de Mayo en Argentina?', '1810', '1820', '1830', '1840', 0, 0, 2),
-(22, '¿Quién fue el primer presidente de Argentina?', 'Bernardino Rivadavia', 'Juan Manuel de Rosas', 'Bartolomé Mitre', 'Justo José de Urquiza', 0, 0, 2),
-(23, '¿Qué batalla marcó el fin del dominio español en Argentina?', 'Batalla de Tucumán', 'Batalla de Cepeda', 'Batalla de Chacabuco', 'Batalla de Caseros', 0, 0, 2),
-(24, '¿En qué año se sancionó la Constitución Nacional de Argentina?', '1853', '1863', '1873', '1883', 0, 0, 2),
-(25, '¿Quién fue el prócer argentino conocido como "El Padre de la Patria"?', 'Manuel Belgrano', 'José de San Martín', 'Juan Manuel de Rosas', 'Domingo Faustino Sarmiento', 0, 0, 2),
-(26, '¿En qué año se produjo la guerra de Malvinas entre Argentina y el Reino Unido?', '1982', '1972', '1992', '1962', 0, 0, 2),
-(27, '¿Quién fue el general argentino que lideró la Campaña del Desierto?', 'Julio Argentino Roca', 'Bartolomé Mitre', 'Domingo Faustino Sarmiento', 'Juan Manuel de Rosas', 0, 0, 2),
-(28, '¿En qué año se independizó Argentina?', '1816', '1826', '1836', '1846', 0, 0, 2),
-(29, '¿Quién fue el presidente argentino que gobernó durante la conocida "Década Infame"?', 'Agustín P. Justo', 'Hipólito Yrigoyen', 'Arturo Frondizi', 'Carlos Menem', 0, 0, 2),
-(30, '¿Qué líder político argentino fundó el movimiento peronista?', 'Juan Domingo Perón', 'Arturo Illia', 'Raúl Alfonsín', 'Néstor Kirchner', 0, 0, 2);
+INSERT INTO Questions (QuestionID, QuestionText, CorrectAnswer, Answer1, Answer2, Answer3, CorrectCount, IncorrectCount, CategoryID, StateID) VALUES
+(21, '¿En qué año se produjo la Revolución de Mayo en Argentina?', '1810', '1820', '1830', '1840', 0, 0, 2, 1),
+(22, '¿Quién fue el primer presidente de Argentina?', 'Bernardino Rivadavia', 'Juan Manuel de Rosas', 'Bartolomé Mitre', 'Justo José de Urquiza', 0, 0, 2, 1),
+(23, '¿Qué batalla marcó el fin del dominio español en Argentina?', 'Batalla de Tucumán', 'Batalla de Cepeda', 'Batalla de Chacabuco', 'Batalla de Caseros', 0, 0, 2, 1),
+(24, '¿En qué año se sancionó la Constitución Nacional de Argentina?', '1853', '1863', '1873', '1883', 0, 0, 2, 1),
+(25, '¿Quién fue el prócer argentino conocido como "El Padre de la Patria"?', 'Manuel Belgrano', 'José de San Martín', 'Juan Manuel de Rosas', 'Domingo Faustino Sarmiento', 0, 0, 2, 1),
+(26, '¿En qué año se produjo la guerra de Malvinas entre Argentina y el Reino Unido?', '1982', '1972', '1992', '1962', 0, 0, 2, 1),
+(27, '¿Quién fue el general argentino que lideró la Campaña del Desierto?', 'Julio Argentino Roca', 'Bartolomé Mitre', 'Domingo Faustino Sarmiento', 'Juan Manuel de Rosas', 0, 0, 2, 1),
+(28, '¿En qué año se independizó Argentina?', '1816', '1826', '1836', '1846', 0, 0, 2, 1),
+(29, '¿Quién fue el presidente argentino que gobernó durante la conocida "Década Infame"?', 'Agustín P. Justo', 'Arturo Frondizi', 'Hipólito Yrigoyen', 'Roberto M. Ortiz', 0, 0, 2, 1),
+(30, '¿Qué presidente argentino fue derrocado por el golpe militar de 1976?', 'Isabel Perón', 'Juan Domingo Perón', 'Raúl Alfonsín', 'Néstor Kirchner', 0, 0, 2, 1);
 
-
-
+-- Inserción de preguntas sobre geografía mundial
+INSERT INTO Questions (QuestionID, QuestionText, CorrectAnswer, Answer1, Answer2, Answer3, CorrectCount, IncorrectCount, CategoryID, StateID) VALUES
+(31, '¿Cuál es el país más grande del mundo en términos de superficie?', 'Rusia', 'Canadá', 'China', 'Estados Unidos', 0, 0, 3, 1),
+(32, '¿Cuál es el río más largo del mundo?', 'El río Amazonas', 'El río Nilo', 'El río Misisipi', 'El río Yangtsé', 0, 0, 3, 1),
+(33, '¿Cuál es la montaña más alta del mundo?', 'El Monte Everest', 'El Monte Kilimanjaro', 'El Monte Aconcagua', 'El Monte McKinley', 0, 0, 3, 1),
+(34, '¿Cuál es la capital de Australia?', 'Canberra', 'Sídney', 'Melbourne', 'Brisbane', 0, 0, 3, 1),
+(35, '¿Cuál es el océano más grande del mundo?', 'El Océano Pacífico', 'El Océano Atlántico', 'El Océano Índico', 'El Océano Ártico', 0, 0, 3, 1),
+(36, '¿En qué continente se encuentra el desierto del Sahara?', 'África', 'Asia', 'América', 'Europa', 0, 0, 3, 1),
+(37, '¿Cuál es el país más poblado del mundo?', 'China', 'India', 'Estados Unidos', 'Brasil', 0, 0, 3, 1),
+(38, '¿Cuál es el país más pequeño del mundo en términos de superficie?', 'El Vaticano', 'Mónaco', 'Nauru', 'San Marino', 0, 0, 3, 1),
+(39, '¿En qué país se encuentra la Gran Muralla China?', 'China', 'India', 'Japón', 'Corea del Sur', 0, 0, 3, 1),
+(40, '¿Cuál es la isla más grande del mundo?', 'Groenlandia', 'Madagascar', 'Borneo', 'Nueva Guinea', 0, 0, 3, 1);
 
 -- Creación de la tabla UserGames
 CREATE TABLE UserGames (

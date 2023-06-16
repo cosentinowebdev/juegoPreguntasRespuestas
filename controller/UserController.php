@@ -157,9 +157,13 @@ class UserController {
             // Verificar si el usuario está logeado
             $isLoggedIn = isset($_SESSION['isLoggedIn']) && $_SESSION['isLoggedIn'] === true;
             $loggedInUserId = isset($_SESSION['userId']) ? $_SESSION['userId'] : null;
+            $Rol = isset($_SESSION['Rol']) ? $_SESSION['Rol'] : null;
             $userData = $this->userModel->getUserById($loggedInUserId);
             $data["isLoggedIn"]=$isLoggedIn;
             $data["userData"]= $userData;
+            $data["isEditor"] = ($Rol === 'editor');
+            $data["isAdmin"] = ($Rol === 'admin');
+            $data["isUser"] = ($Rol === 'user');
             if ($isLoggedIn && $userData) {
                 // El usuario ya está logeado
                 // Mostrar la página de inicio de sesión

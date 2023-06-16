@@ -40,6 +40,7 @@ class QuestionModel {
         // Generar una consulta SQL para obtener una pregunta aleatoria
         $sql = "SELECT q.*, c.* FROM Questions q 
         JOIN Categories c ON q.CategoryID = c.CategoryID 
+        WHERE q.StateID = 1
         ORDER BY RAND() LIMIT 1";
         
         // Ejecutar la consulta en la base de datos
@@ -145,6 +146,133 @@ class QuestionModel {
             return "Normal";
         } else {
             return "Difícil";
+        }
+    }
+
+    public function changeQuestionState($questionID, $stateID) {
+        $sql = "UPDATE Questions SET StateID = ? WHERE QuestionID = ?";
+        $stmt = $this->database->prepare($sql);
+
+        if (!$stmt) {
+            return false;
+        }
+
+        $stmt->bind_param("ss", $stateID, $questionID);
+        $success = $stmt->execute();
+        $stmt->close();
+
+        if ($success) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function getAllQuestions() {
+        $sql = "SELECT q.*, c.CategoryName, s.StateName
+                FROM Questions q
+                JOIN Categories c ON q.CategoryID = c.CategoryID
+                JOIN States s ON q.StateID = s.StateID";
+        $stmt = $this->database->prepare($sql);
+    
+        if (!$stmt) {
+            return false;
+        }
+    
+        $questions = [];
+        $success = $stmt->execute();
+    
+        if (!$success) {
+            return null;
+        }
+    
+        $result = $stmt->get_result();
+    
+        if ($result->num_rows === 0) {
+            // No se encontró ningún dato
+            return null;
+        }
+    
+        while ($row = $result->fetch_assoc()) {
+            $questions[] = $row;
+        }
+    
+        $stmt->close();
+    
+        return $questions;
+    }
+
+    public function createQuestion($questionText, $correctAnswer, $answer1, $answer2, $answer3, $categoryID,$StateID) {
+        $sql = "INSERT INTO Questions (QuestionText, CorrectAnswer, Answer1, Answer2, Answer3, CategoryID, StateID) 
+                VALUES (?, ?, ?, ?, ?, ?, ?)";
+        $stmt = $this->database->prepare($sql);
+
+        if (!$stmt) {
+            return false;
+        }
+
+        $stmt->bind_param("sssssss", $questionText, $correctAnswer, $answer1, $answer2, $answer3, $categoryID, $StateID);
+        $success = $stmt->execute();
+        $stmt->close();
+
+        if ($success) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    public function updateQuestionState($questionID, $stateID)
+    {
+        $sql = "UPDATE Questions SET StateID = ? WHERE QuestionID = ?";
+        $stmt = $this->database->prepare($sql);
+
+        if (!$stmt) {
+            return false;
+        }
+
+        $stmt->bind_param("ii", $stateID, $questionID);
+        $success = $stmt->execute();
+        $stmt->close();
+
+        return $success;
+    }
+
+    public function updateQuestion($questionID, $questionText, $correctAnswer, $answer1, $answer2, $answer3, $categoryID) {
+        $sql = "UPDATE Questions SET QuestionText = ?, CorrectAnswer = ?, Answer1 = ?, Answer2 = ?, Answer3 = ?, CategoryID = ? 
+                WHERE QuestionID = ?";
+        $stmt = $this->database->prepare($sql);
+
+        if (!$stmt) {
+            return false;
+        }
+
+        $stmt->bind_param("sssssss", $questionText, $correctAnswer, $answer1, $answer2, $answer3, $categoryID, $questionID);
+        $success = $stmt->execute();
+        $stmt->close();
+
+        if ($success) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function deleteQuestion($questionID) {
+        $sql = "DELETE FROM Questions WHERE QuestionID = ?";
+        $stmt = $this->database->prepare($sql);
+
+        if (!$stmt) {
+            return false;
+        }
+
+        $stmt->bind_param("s", $questionID);
+        $success = $stmt->execute();
+        $stmt->close();
+
+        if ($success) {
+            return true;
+        } else {
+            return false;
         }
     }
 }
