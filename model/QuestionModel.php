@@ -35,6 +35,40 @@ class QuestionModel {
         $question = $result->fetch_assoc();
         return $question;
     }
+    public function getQuestionByIdUpdate($questionId) {
+        $sql = "SELECT Questions.*, 
+                       Categories.CategoryName AS CorrelatedCategory,
+                       CASE WHEN Questions.CategoryID = Categories.CategoryID THEN 1 ELSE 0 END AS IsCorrelatedCategory,
+                       States.StateName AS CorrelatedState,
+                       CASE WHEN Questions.StateID = States.StateID THEN 1 ELSE 0 END AS IsCorrelatedState
+                FROM Questions
+                LEFT JOIN Categories ON Questions.CategoryID = Categories.CategoryID
+                LEFT JOIN States ON Questions.StateID = States.StateID
+                WHERE Questions.QuestionID = ?";
+        $stmt = $this->database->prepare($sql);
+        
+        if (!$stmt) {
+            // Error al preparar la consulta
+            return null;
+        }
+        
+        $stmt->bind_param("s", $questionId);
+        
+        if (!$stmt->execute()) {
+            // Error al ejecutar la consulta
+            return null;
+        }
+        
+        $result = $stmt->get_result();
+        
+        if ($result->num_rows === 0) {
+            // No se encontró ninguna pregunta con el ID proporcionado
+            return null;
+        }
+        
+        $question = $result->fetch_assoc();
+        return $question;
+    }
 
     public function getRandomQuestion() {
         // Generar una consulta SQL para obtener una pregunta aleatoria

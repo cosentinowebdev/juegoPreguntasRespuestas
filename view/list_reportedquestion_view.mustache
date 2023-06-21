@@ -10,26 +10,32 @@
         <table class="table">
             <thead>
             <tr>
-                <th>ID</th>
+                <th>ID Reporte</th>
                 <th>Pregunta</th>
+                <th>Razon</th>
                 <th>Respuesta Correcta</th>
-                <th>Estado</th>
+                <th>Estado del reclamo</th>
+                <th>Estado de la pregunta</th>
+                <th>Categoria</th>
                 <th>Opciones</th>
             </tr>
             </thead>
             <tbody>
-            {{#questionsData}}
+            {{#reportedQuestionsData}}
             <tr>
-                <td>{{QuestionID}}</td>
+                <td>{{ReportID}}</td>
                 <td>{{QuestionText}}</td>
+                <th>{{ReportReason}}</td>
                 <td>{{CorrectAnswer}}</td>
+                <td>{{Status}}</td>
                 <td>{{StateName}}</td>
+                <td>{{CategoryName}}</td>
                 <td>
                     <a href="/question/edit?id={{QuestionID}}" class="btn btn-primary">edit</a>
-
+                    <a href="/question/fix_reported?id={{ReportID}}" class="btn btn-primary">fixed</a>
                 </td>
             </tr>
-            {{/questionsData}}
+            {{/reportedQuestionsData}}
             </tbody>
         </table>
 
@@ -51,20 +57,18 @@
                 <th>ID</th>
                 <th>Pregunta</th>
                 <th>Respuesta Correcta</th>
-                <th>Estado</th>
                 <th>Opciones</th>
             </tr>
             </thead>
             <tbody>
-            {{#questionsData}}
+            {{#reportedQuestionsData}}
             <tr>
                 <td>{{QuestionID}}</td>
                 <td>{{QuestionText}}</td>
                 <td>{{CorrectAnswer}}</td>
-                <td>{{StateName}}</td>
                 <td>2</td>
             </tr>
-            {{/questionsData}}
+            {{/reportedQuestionsData}}
             </tbody>
         </table>
         

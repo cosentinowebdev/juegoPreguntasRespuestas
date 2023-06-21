@@ -47,8 +47,7 @@ class Configuration {
             new ReportedQuestionModel(
                 $this->getDatabase()
             ),
-
-            new $this->getRenderer()
+            $this->getRenderer()
         );
     }
     public function getQuestionController(){
@@ -59,6 +58,9 @@ class Configuration {
             new Session()
             ,
             new UtilitiesModel(
+                $this->getDatabase()
+            ),
+            new ReportedQuestionModel(
                 $this->getDatabase()
             ),
             $this->getRenderer()

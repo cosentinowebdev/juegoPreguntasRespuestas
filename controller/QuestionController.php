@@ -5,12 +5,14 @@ class QuestionController {
     private $renderer;
     private $session;
     private $utilitiesModel;
+    private $reportedQuestionModel;
 
-    public function __construct($questionModel, $session, $utilitiesModel, $renderer) {
+    public function __construct($questionModel, $session, $utilitiesModel, $reportedQuestionModel, $renderer) {
         $this->questionModel = $questionModel;
         $this->renderer = $renderer;
         $this->session = $session;
         $this->utilitiesModel = $utilitiesModel;
+        $this->reportedQuestionModel = $reportedQuestionModel;
     }
     public function list(){
         $questionsData = $this->questionModel->getAllQuestions();
@@ -92,6 +94,41 @@ class QuestionController {
             exit();
         }
     }
+    public function edit(){
+        $data = $this->session->getData();
+        $categories = $this->utilitiesModel->getCategories();
+        $states = $this->utilitiesModel->getStates();
+
+        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+            if ($data["isLoggedIn"] && ($data["isEditor"] || $data["isAdmin"])) {
+                $idUpdate = $_GET["id"];
+                $question = $this->questionModel->getQuestionById($idUpdate);
+                $data['question']=$question;
+    
+                foreach ($categories as &$category) {
+                    $category['habilitado'] = ($category['CategoryID'] == $question['CategoryID']);
+                }
+                
+                foreach ($states as &$state) {
+                    $state['habilitado'] = ($state['StateID'] == $question['StateID']);
+                }
+    
+                $data['categories'] = $categories;
+                $data['states'] = $states;
+
+                $this->renderer->render("edit_question", $data);
+            }else {
+
+                $baseUrl = dirname($_SERVER['SCRIPT_NAME']);
+                $baseUrl= $baseUrl."user/lobby";
+                header("Location: $baseUrl");
+                exit();
+            }
+
+        }else{
+            $this->renderer->render("list_question", $data);
+        }
+    }
     public function list_categories(){
         $data = $this->session->getData();
         $Categories = $this->utilitiesModel->getCategories();
@@ -107,5 +144,53 @@ class QuestionController {
             exit();
         }
     }
+    public function list_reported(){
+        $reportedQuestionsData = $this->reportedQuestionModel->listReportedQuestions();
+
+        $data = $this->session->getData();
+        $data["reportedQuestionsData"]= $reportedQuestionsData;
+        if ($data["isLoggedIn"] && ($data["isEditor"] || $data["isAdmin"])) {
+
+            $this->renderer->render("list_reportedquestion", $data);
+
+        } else {
+
+            $baseUrl = dirname($_SERVER['SCRIPT_NAME']);
+            $baseUrl= $baseUrl."user/lobby";
+            header("Location: $baseUrl");
+            exit();
+        }
+
+    }
+    public function fix_reported(){
+        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+            $idUpdate = $_GET["id"];
+
+
+            $data = $this->session->getData();
+            
+            if ($data["isLoggedIn"] && ($data["isEditor"] || $data["isAdmin"])) {
+                $reportedQuestionsData = $this->reportedQuestionModel->updateReportedQuestion($idUpdate,'fixed');
+                $data["reportedQuestionsData"]= $reportedQuestionsData;
+                $baseUrl = dirname($_SERVER['SCRIPT_NAME']);
+                $baseUrl= $baseUrl."question/list_reported";
+                header("Location: $baseUrl");
+                exit();
+
+            } else {
+
+                $baseUrl = dirname($_SERVER['SCRIPT_NAME']);
+                $baseUrl= $baseUrl."user/lobby";
+                header("Location: $baseUrl");
+                exit();
+            }
+        }else{
+            $baseUrl = dirname($_SERVER['SCRIPT_NAME']);
+            $baseUrl= $baseUrl."user/lobby";
+            header("Location: $baseUrl");
+            exit();
+        }
+    }
+
 
 }
