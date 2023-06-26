@@ -3,18 +3,21 @@ include_once('helpers/MySqlDatabase.php');
 include_once("helpers/MustacheRender.php");
 include_once('helpers/Router.php');
 include_once('helpers/Session.php');
+include_once('helpers/Graficos.php');
 
 include_once('model/UserModel.php');
 include_once('model/GamesModel.php');
 include_once('model/QuestionModel.php');
 include_once('model/ReportedQuestionModel.php');
 include_once('model/UtilitiesModel.php');
+include_once('model/UserQuestionsModel.php');
 
 include_once('controller/InicioController.php');
 include_once('controller/LoginController.php');
 include_once('controller/UserController.php');
 include_once('controller/GameController.php');
 include_once('controller/QuestionController.php');
+include_once('controller/AdminController.php');
 
 include_once('third-party/mustache/src/Mustache/Autoloader.php');
 
@@ -28,7 +31,9 @@ class Configuration {
     public function getUserController() {
         return new UserController(
             new UserModel($this->getDatabase()),
-            $this->getRenderer());
+            $this->getRenderer(),
+            new Session()
+            );
     }
     public function getInicioController() {
         return new InicioController($this->getRenderer());
@@ -47,7 +52,30 @@ class Configuration {
             new ReportedQuestionModel(
                 $this->getDatabase()
             ),
-            $this->getRenderer()
+            new UserQuestionModel(
+                $this->getDatabase()
+            ),
+            $this->getRenderer(),
+            new Session()
+        );
+    }
+    public function getAdminController(){
+        return new AdminController(
+            new GamesModel(
+                $this->getDatabase()
+            ),
+            new QuestionModel(
+                $this->getDatabase()
+            ),
+            new ReportedQuestionModel(
+                $this->getDatabase()
+            ),
+            new UserModel(
+                $this->getDatabase()
+            ),
+            $this->getRenderer(),
+            new Session(),
+            new Graficos()
         );
     }
     public function getQuestionController(){

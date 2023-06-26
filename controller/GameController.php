@@ -5,12 +5,22 @@ class GameController {
     private $questionModel;
     private $renderer;
     private $ReportedQuestionModel;
+    private $session;
+    private $UserQuestionModel;
 
-    public function __construct($gameModel,$questionModel, $ReportedQuestionModel , $renderer) {
+    public function __construct(
+        $gameModel,
+        $questionModel,
+        $ReportedQuestionModel,
+        $UserQuestionModel,
+        $renderer,
+        $session) {
         $this->gameModel = $gameModel;
         $this->questionModel = $questionModel;
         $this->renderer = $renderer;
         $this->ReportedQuestionModel = $ReportedQuestionModel;
+        $this->UserQuestionModel = $UserQuestionModel;
+        $this->session = $session;
     }
     public function list(){
         $baseUrl = dirname($_SERVER['SCRIPT_NAME']);
@@ -19,14 +29,12 @@ class GameController {
         exit();
     }
     public function play() {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-        $isLoggedIn = isset($_SESSION['isLoggedIn']) && $_SESSION['isLoggedIn'] === true;
-        $loggedInUserId = isset($_SESSION['userId']) ? $_SESSION['userId'] : null;
-        $gameId = isset($_SESSION['gameId']) ? $_SESSION['gameId'] : null;
-        $data["isLoggedIn"]=$isLoggedIn;
-        if ($isLoggedIn) {
+        $data = $this->session->getData();
+        $loggedInUserId = $data["userId"];
+        $gameId = $data["gameId"];
+        $QuestionID="";
+        $finisGame = false;
+        if ($data["isLoggedIn"]) {
             
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $QuestionID = $_POST['id'];
@@ -40,14 +48,20 @@ class GameController {
                     if (isset($_SESSION['gameId'])) {
                         unset($_SESSION['gameId']);
                     }
-                    $this->questionModel->incrementIncorrectCount($QuestionID);
+                    $finisGame = $this->questionModel->incrementIncorrectCount($QuestionID);
                 }           
             }else{
                 $UserGame = $this->gameModel->initGame($loggedInUserId);
                 $_SESSION['gameId'] = $UserGame['GameID'];
+                $gameId = $UserGame['GameID'];
                 $data["userGame"] = $UserGame;
             }
             $data["question"]=$this->questionModel->getRandomQuestion();
+            $QuestionID=$data["question"]["QuestionID"];
+            if(!$finisGame){
+                $this->UserQuestionModel->createUserQuestion($loggedInUserId,$QuestionID,$gameId);
+            }
+            //$userID, $questionID, $gameID
             $data["questionAnswers"]=[$data["question"]["CorrectAnswer"],$data["question"]["Answer1"],$data["question"]["Answer2"],$data["question"]["Answer3"]];
             shuffle($data["questionAnswers"]);
 
@@ -61,21 +75,15 @@ class GameController {
 
     public function reportQuestion()
     {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-    
-        $isLoggedIn = isset($_SESSION['isLoggedIn']) && $_SESSION['isLoggedIn'] === true;
-        $loggedInUserId = isset($_SESSION['userId']) ? $_SESSION['userId'] : null;
-        $gameId = isset($_SESSION['gameId']) ? $_SESSION['gameId'] : null;
-        $data["isLoggedIn"] = $isLoggedIn;
+        $data = $this->session->getData();
+        $loggedInUserId = $data["userId"];
+        $gameId = $data["gameId"];
         
-        if ($isLoggedIn && $gameId) {
+        if ($data["isLoggedIn"] && $gameId) {
             if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                 if (!isset($_GET['id'])) {
-                    exit("rompio");
-                    // Redirigir al inicio si no se proporciona el ID de la pregunta
-                    header("Location: /");
+                    $baseUrl = dirname($_SERVER['SCRIPT_NAME']);
+                    header("Location: $baseUrl");
                     exit();
                 }
     
@@ -86,8 +94,8 @@ class GameController {
                 $this->renderer->render("report_question", $data);
             } elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if (!isset($_POST['id']) || !isset($_POST['reportReason'])) {
-                    // Redirigir al inicio si no se proporciona el ID de la pregunta o la razón del reporte
-                    header("Location: /");
+                    $baseUrl = dirname($_SERVER['SCRIPT_NAME']);
+                    header("Location: $baseUrl");
                     exit();
                 }
     
@@ -103,13 +111,14 @@ class GameController {
                 // Cerrar la página
                 exit();
             }else{
-                exit("rompio");
+                $baseUrl = dirname($_SERVER['SCRIPT_NAME']);
+                header("Location: $baseUrl");
+                exit();
             }
         } else {
-            exit("rompio");
-            // Redirigir al inicio si no hay sesión iniciada o no se ha proporcionado el ID del juego
-            // header("Location: /");
-            // exit();
+            $baseUrl = dirname($_SERVER['SCRIPT_NAME']);
+            header("Location: $baseUrl");
+            exit();
         }
     }
 

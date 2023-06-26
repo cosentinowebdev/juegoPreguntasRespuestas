@@ -1,0 +1,100 @@
+{{#isAdmin}}
+    <!-- Contenido específico para el rol de Admin -->
+    {{> header_admin}}
+    </div>
+
+        <!-- User Actions -->
+        <div class="container mt-4">
+            <h2>Estadisticas</h2>
+            <div class="row">
+                <!-- Formulario de fechas -->
+                <form action="/otra-pagina" method="POST">
+                    <div class="form-group">
+                        <label for="startDate">Fecha de inicio:</label>
+                        <input type="date" id="startDate" name="startDate" class="form-control" value="{{startDate}}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="endDate">Fecha de fin:</label>
+                        <input type="date" id="endDate" name="endDate" class="form-control" value="{{endDate}}" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Enviar</button>
+                </form>
+            </div>
+            <h2>Estadisticas</h2>
+            <div class="row">
+                <!-- Imagen 1 -->
+                <div class="col-md-4">
+                    <div class="card">
+                        <img src='data:image/png;base64,{{barcharUsuariosActivos}}' class="card-img-top" alt="Gráfico 1">
+                        <div class="card-body">
+                            <h5 class="card-title">Gráfico 1</h5>
+                            <a href="#" class="btn btn-primary">Ver</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Imagen 2 -->
+                <div class="col-md-4">
+                    <div class="card">
+                        <img src='data:image/png;base64,{{barcharUsuariosPorEdad}}' class="card-img-top" alt="Gráfico 2">
+                        <div class="card-body">
+                            <h5 class="card-title">Gráfico 2</h5>
+                            <a href="#" class="btn btn-primary">Ver</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Imagen 3 -->
+                <div class="col-md-4">
+                    <div class="card">
+                        <img src='data:image/png;base64,{{barcharUsuariosPorSexo}}' class="card-img-top" alt="Gráfico 3">
+                        <div class="card-body">
+                            <h5 class="card-title">Gráfico 3</h5>
+                            <a href="#" class="btn btn-primary">Ver</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Imagen 4 -->
+                <div class="col-md-4">
+                    <div class="card">
+                        <img src='data:image/png;base64,{{barcharUsuariosPorPais}}' class="card-img-top" alt="Gráfico 4">
+                        <div class="card-body">
+                            <h5 class="card-title">Gráfico 4</h5>
+                            <a href="#" class="btn btn-primary">Ver</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Imagen 5 -->
+                <div class="col-md-4">
+                    <div class="card">
+                        <img src='data:image/png;base64,{{barcharUsuarioPorcentaje}}' class="card-img-top" alt="Gráfico 5">
+                        <div class="card-body">
+                            <h5 class="card-title">Gráfico 5</h5>
+                            <a href="#" class="btn btn-primary">Ver</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Imagen 6 -->
+                <div class="col-md-4">
+                    <div class="card">
+                        <img src='data:image/png;base64,{{piecharCategoriaPorcentaje}}' class="card-img-top" alt="Gráfico 6">
+                        <div class="card-body">
+                            <h5 class="card-title">Gráfico 6</h5>
+                            <a href="#" class="btn btn-primary">Ver</a>
+                        </div>
+                    </div>
+                </div>
+                linecharJugadas
+                <div class="col-md-4">
+                    <div class="card">
+                        <img src='data:image/png;base64,{{linecharJugadas}}' class="card-img-top" alt="Gráfico 6">
+                        <div class="card-body">
+                            <h5 class="card-title">Gráfico 6</h5>
+                            <a href="#" class="btn btn-primary">Ver</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End User Actions -->
+    <!-- ... -->
+{{/isAdmin}}
+{{> footer}}

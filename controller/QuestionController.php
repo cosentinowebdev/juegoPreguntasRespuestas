@@ -19,7 +19,7 @@ class QuestionController {
 
         $data = $this->session->getData();
         $data["questionsData"]= $questionsData;
-
+        $data = $this->session->getData();
         if ($data["isLoggedIn"] && ($data["isEditor"] || $data["isAdmin"])) {
 
             $this->renderer->render("list_question", $data);

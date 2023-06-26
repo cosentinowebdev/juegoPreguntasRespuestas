@@ -132,14 +132,11 @@ class UserModel {
     public function checkUserExistence($username, $email) {
         $query = "SELECT * FROM User WHERE Username = ?";
         $stmt = $this->database->prepare($query);
-        // $stmt->bind_param("ss", $username, $email);
         $stmt->bind_param("s", $username);
         $stmt->execute();
         $result = $stmt->get_result();
         $stmt->close();  
-        // echo($username);
-        // var_dump($result->num_rows);     
-        // echo($result->num_rows > 0);
+
         
         if ($result->num_rows > 0) {
             // exit();
@@ -151,9 +148,7 @@ class UserModel {
             $stmt->execute();
             $result2 = $stmt->get_result();
             $stmt->close();
-            // var_dump($result2->num_rows);
             if ($result2->num_rows > 0) {
-                // exit();
                 return true; // El correo ya existe
             } else {
                 return false; // El usuario o correo electrónico no existe
@@ -199,5 +194,269 @@ class UserModel {
 
         // Devolver los usuarios clasificados por puntaje
         return $result;
+    }
+    public function getAccountStatusPlayersCountDeprecado($status) {
+        
+        // Generar una consulta SQL para contar la cantidad de jugadores según el estado de la cuenta
+        $sql = "SELECT COUNT(*) AS PlayersCount
+                FROM User
+                WHERE AccountStatus = ?";
+    
+        // Preparar la consulta
+        $stmt = $this->database->prepare($sql);
+    
+        if (!$stmt) {
+            // Error al preparar la consulta
+            return false;
+        }
+    
+        // Asignar el valor del parámetro y ejecutar la consulta
+        $stmt->bind_param("s", $status);
+        $stmt->execute();
+    
+        // Obtener el resultado de la consulta
+        $result = $stmt->get_result();
+    
+        // Verificar si la consulta se ejecutó correctamente
+        if (!$result) {
+            // Error al ejecutar la consulta
+            $stmt->close();
+            return false;
+        }
+    
+        // Obtener el número de jugadores según el estado de la cuenta
+        $row = $result->fetch_assoc();
+        $playersCount = $row['PlayersCount'];
+    
+        $stmt->close();
+    
+        // Devolver la cantidad de jugadores según el estado de la cuenta
+        return $playersCount;
+    }
+    public function getAccountStatusPlayersCount($status, $startDate, $endDate) {
+        // Generar una consulta SQL para contar la cantidad de jugadores según el estado de la cuenta y el rango de fechas
+        $sql = "SELECT DATE_FORMAT(Timestamp, '%Y-%m-%d') AS Date, COUNT(*) AS PlayersCount
+                FROM UserGames
+                WHERE Timestamp >= ? AND Timestamp <= ?
+                GROUP BY DATE(Timestamp)";
+    
+        // Preparar la consulta
+        $stmt = $this->database->prepare($sql);
+    
+        if (!$stmt) {
+            // Error al preparar la consulta
+            return false;
+        }
+    
+        // Asignar los valores de los parámetros y ejecutar la consulta
+        $stmt->bind_param("ss", $startDate, $endDate);
+        $stmt->execute();
+    
+        // Obtener el resultado de la consulta
+        $result = $stmt->get_result();
+    
+        // Verificar si la consulta se ejecutó correctamente
+        if (!$result) {
+            // Error al ejecutar la consulta
+            $stmt->close();
+            return false;
+        }
+    
+        // Obtener los datos de fecha y cantidad de jugadores
+        $playersData = array();
+        $i=0;
+        while ($row = $result->fetch_assoc()) {
+            $date = $row['Date'];
+            $playersCount = $row['PlayersCount'];
+            $playersData['playersCount'][$i] = $playersCount;
+            $playersData['date'][$i] = $date;
+            $i++;
+        }
+        $stmt->close();
+    
+        // Devolver los datos de fecha y cantidad de jugadores
+        return $playersData;
+    }
+
+    public function getUsersCountByAgeGroup($startDate, $endDate) {
+        // Obtener el año actual
+        $currentYear = date("Y");
+    
+        // Definir los rangos de edad para cada grupo
+        $ageGroups = array(
+            "menores" => array("minAge" => 0, "maxAge" => 17),
+            "jubilados" => array("minAge" => 65, "maxAge" => 150),
+            "adulto" => array("minAge" => 18, "maxAge" => 64)
+        );
+    
+        // Inicializar el contador de usuarios por grupo de edad
+        $usersCountByAgeGroup = array(
+            "menores" => 0,
+            "jubilados" => 0,
+            "adulto" => 0
+        );
+    
+        // Recorrer los grupos de edad y realizar la consulta por cada uno
+        foreach ($ageGroups as $ageGroup => $ageRange) {
+            // Calcular el año de nacimiento límite inferior y superior según el rango de edad
+            $minBirthYear = $currentYear - $ageRange["maxAge"] - 1;
+            $maxBirthYear = $currentYear - $ageRange["minAge"];
+    
+            // Generar una consulta SQL para contar la cantidad de usuarios según el grupo de edad
+            $sql = "SELECT COUNT(DISTINCT User.UserID) AS UsersCount
+            FROM User
+            INNER JOIN UserGames ON User.UserID = UserGames.UserID
+            WHERE User.BirthYear >= ? AND User.BirthYear <= ?
+            AND UserGames.Timestamp >= ? AND UserGames.Timestamp <= ?";
+    
+            // Preparar la consulta
+            $stmt = $this->database->prepare($sql);
+    
+            if (!$stmt) {
+                // Error al preparar la consulta
+                return false;
+            }
+    
+            // Asignar los valores de los parámetros y ejecutar la consulta
+            $stmt->bind_param("iiss", $minBirthYear, $maxBirthYear, $startDate, $endDate);
+            $stmt->execute();
+    
+            // Obtener el resultado de la consulta
+            $result = $stmt->get_result();
+    
+            // Verificar si la consulta se ejecutó correctamente
+            if (!$result) {
+                // Error al ejecutar la consulta
+                $stmt->close();
+                return false;
+            }
+    
+            // Obtener el número de usuarios según el grupo de edad
+            $row = $result->fetch_assoc();
+
+            $usersCount = $row['UsersCount'];
+    
+            $stmt->close();
+    
+            // Actualizar el contador de usuarios por grupo de edad
+            $usersCountByAgeGroup[$ageGroup] = $usersCount;
+        }
+    
+        // Crear el texto descriptivo para cada grupo de edad
+        $descriptiveTexts = array(
+            "menores" => "menores de edad",
+            "jubilados" => "jubilados",
+            "adulto" => "adultos"
+        );
+    
+        // Crear un array que contenga la cantidad de usuarios y el texto descriptivo para cada grupo de edad
+        $usersByAgeGroup = array();
+        $i=0;
+        foreach ($usersCountByAgeGroup as $ageGroup => $count) {
+            // Obtener las edades correspondientes para cada grupo de edad
+            $minAge = $ageGroups[$ageGroup]["minAge"];
+            $maxAge = $ageGroups[$ageGroup]["maxAge"];
+    
+            // Crear el texto descriptivo con las edades
+            $descriptiveText = $count . " " . $descriptiveTexts[$ageGroup] . " (edad: " . $minAge . "-" . $maxAge . ")";
+            $charData["ageGroup"][$i] = $descriptiveTexts[$ageGroup];
+            $charData["count"][$i] = $count;
+            $usersByAgeGroup[] = array(
+                "group" => $ageGroup,
+                "count" => $count,
+                "descriptiveText" => $descriptiveText
+            );
+            $i++;
+        }
+    
+        // Devolver el array con la cantidad de usuarios por grupo de edad y el texto descriptivo
+        return $charData;
+    }
+    public function getUsersCountByGender($startDate, $endDate) {
+        // Generar una consulta SQL para contar la cantidad de usuarios por sexo
+        $sql = "SELECT Gender, COUNT(DISTINCT User.UserID) AS UsersCount
+                FROM User
+                INNER JOIN UserGames ON User.UserID = UserGames.UserID
+                WHERE UserGames.Timestamp >= ? AND UserGames.Timestamp <= ?
+                GROUP BY Gender";
+
+        // Preparar la consulta
+        $stmt = $this->database->prepare($sql);
+        
+        if (!$stmt) {
+            // Error al preparar la consulta
+            return false;
+        }
+        $stmt->bind_param("ss", $startDate, $endDate);
+        $stmt->execute();
+    
+        // Obtener el resultado de la consulta
+        $result = $stmt->get_result();
+
+        // Verificar si la consulta se ejecutó correctamente
+        if (!$result) {
+            // Error al ejecutar la consulta
+            $stmt->close();
+            return false;
+        }
+    
+        // Obtener los resultados de la consulta
+        $usersCountByGender = array();
+        $i=0;
+        while ($row = $result->fetch_assoc()) {
+            $gender = $row['Gender'];
+            $usersCount = $row['UsersCount'];
+            $charData['Gender'][$i]=$row['Gender'];
+            $charData['UsersCount'][$i]=$row['UsersCount'];
+            // $usersCountByGender[$gender] = $usersCount;
+            $i++;
+        }
+    
+        // Devolver la cantidad de usuarios por sexo
+        return $charData;
+    }
+    public function getUsersCountByCountry($startDate, $endDate) {
+        // Generar una consulta SQL para contar la cantidad de usuarios por país
+        $sql = "SELECT Country, COUNT(DISTINCT User.UserID) AS UsersCount
+                FROM User
+                INNER JOIN UserGames ON User.UserID = UserGames.UserID
+                WHERE UserGames.Timestamp >= ? AND UserGames.Timestamp <= ?
+                GROUP BY Country";
+
+        // Preparar la consulta
+        $stmt = $this->database->prepare($sql);
+
+        if (!$stmt) {
+            // Error al preparar la consulta
+            return false;
+        }
+        $stmt->bind_param("ss", $startDate, $endDate);
+        $stmt->execute();
+    
+        // Obtener el resultado de la consulta
+        $result = $stmt->get_result();
+
+        // Verificar si la consulta se ejecutó correctamente
+        if (!$result) {
+            // Error al ejecutar la consulta
+            $stmt->close();
+            return false;
+        }
+    
+        // Obtener los resultados de la consulta
+        $usersCountByCountry = array();
+        $i = 0;
+        while ($row = $result->fetch_assoc()) {
+            // $country = $row['Country'];
+            // $usersCount = $row['UsersCount'];
+            // $usersCountByCountry[$country] = $usersCount;
+            $charData['Country'][$i]=$row['Country'];
+            $charData['UsersCount'][$i]=$row['UsersCount'];
+
+            $i++;
+        }
+
+        // Devolver la cantidad de usuarios por país
+        return $charData;
     }
 }

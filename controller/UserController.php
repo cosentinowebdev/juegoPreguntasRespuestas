@@ -3,14 +3,17 @@
 class UserController {
     private $userModel;
     private $renderer;
+    private $session;
 
-    public function __construct($userModel, $renderer) {
+    public function __construct($userModel, $renderer, $session) {
         $this->userModel = $userModel;
         $this->renderer = $renderer;
+        $this->session = $session;
     }
 
     public function createUser(){
-
+        $data = $this->session->getData();
+        // if ($data["isLoggedIn"] && ($data["isEditor"] || $data["isAdmin"])) {}
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 // Obtener los datos del formulario
@@ -73,29 +76,15 @@ class UserController {
                     header("Location: $baseUrl");
                     exit();
                 }else{
-                    // Iniciar la sesión si aún no está iniciada
-                    if (session_status() === PHP_SESSION_NONE) {
-                        session_start();
-                    }
 
-                    // Verificar si el usuario está logeado
-                    $isLoggedIn = isset($_SESSION['isLoggedIn']) && $_SESSION['isLoggedIn'] === true;
-                    $data["isLoggedIn"]=$isLoggedIn;
                     $data["error"]=true;
                     $this->renderer->render("create_user", $data);
                 }
 
             
         }else{
-            // Iniciar la sesión si aún no está iniciada
-            if (session_status() === PHP_SESSION_NONE) {
-                session_start();
-            }
 
-            // Verificar si el usuario está logeado
-            $isLoggedIn = isset($_SESSION['isLoggedIn']) && $_SESSION['isLoggedIn'] === true;
-            $data["isLoggedIn"]=$isLoggedIn;
-            if ($isLoggedIn) {
+            if ($data["isLoggedIn"]) {
                 // El usuario ya está logeado
 
                 // Redireccionar al usuario a la página de inicio
@@ -113,19 +102,15 @@ class UserController {
 
     }
     public function showUser() {
-        // Verificar si el usuario está logueado
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-        $isLoggedIn = isset($_SESSION['isLoggedIn']) && $_SESSION['isLoggedIn'] === true;
-        // Obtener el ID del usuario actual almacenado en la sesión
-        $loggedInUserId = isset($_SESSION['userId']) ? $_SESSION['userId'] : null;
+        $data = $this->session->getData();
+        // if ($data["isLoggedIn"] && ($data["isEditor"] || $data["isAdmin"])) {}
+        
         // Obtener el ID del usuario especificado en el parámetro GET
         $requestedUserId = isset($_GET['id']) ? $_GET['id'] : null;
         // Determinar si se debe mostrar el usuario actual o un usuario específico
-        if ($loggedInUserId && !$requestedUserId) {
+        if ($data["userId"] && !$requestedUserId) {
             // Mostrar el usuario actual
-            $userData = $this->userModel->getUserById($loggedInUserId);
+            $userData = $this->userModel->getUserById($data["userId"]);
         } elseif ($requestedUserId) {
             // Mostrar un usuario específico
             $userData = $this->userModel->getUserById($requestedUserId);
@@ -141,30 +126,34 @@ class UserController {
             header("Location: $baseUrl");
             exit();
         }
+        $data["userData"]=$userData;
+
         // Renderizar la vista del usuario
-        $this->renderer->render('show_user', ['userData' => $userData,'isLoggedIn'=>$isLoggedIn]);
+        $this->renderer->render('show_user', $data); //['userData' => $userData,'isLoggedIn'=>$isLoggedIn]
     }
     public function list() {
-        $data["users"] = $this->userModel->getUser();
-        $this->renderer->render("usuarios",$data);
+        // $data = $this->session->getData();
+        // if ($data["isLoggedIn"] && ($data["isEditor"] || $data["isAdmin"])) {
+        //     $data["users"] = $this->userModel->getUser();
+        //     $this->renderer->render("usuarios",$data);
+        // }else{
+        //     // Si no se encuentra el usuario, redirigir o mostrar un mensaje de error
+        //     $baseUrl = dirname($_SERVER['SCRIPT_NAME']);
+        //     header("Location: $baseUrl");
+        //     exit();
+        // }
+        $baseUrl = dirname($_SERVER['SCRIPT_NAME']);
+        header("Location: $baseUrl");
+        exit();
     }
     public function lobby() {
 
-            // Iniciar la sesión si aún no está iniciada
-            if (session_status() === PHP_SESSION_NONE) {
-                session_start();
-            }
-            // Verificar si el usuario está logeado
-            $isLoggedIn = isset($_SESSION['isLoggedIn']) && $_SESSION['isLoggedIn'] === true;
-            $loggedInUserId = isset($_SESSION['userId']) ? $_SESSION['userId'] : null;
-            $Rol = isset($_SESSION['Rol']) ? $_SESSION['Rol'] : null;
-            $userData = $this->userModel->getUserById($loggedInUserId);
-            $data["isLoggedIn"]=$isLoggedIn;
+            $data = $this->session->getData();
+
+            $userData = $this->userModel->getUserById($data["userId"]);
             $data["userData"]= $userData;
-            $data["isEditor"] = ($Rol === 'editor');
-            $data["isAdmin"] = ($Rol === 'admin');
-            $data["isUser"] = ($Rol === 'user');
-            if ($isLoggedIn && $userData) {
+
+            if ($data["isLoggedIn"] && $data["userId"]) {
                 // El usuario ya está logeado
                 // Mostrar la página de inicio de sesión
                 $this->renderer->render("lobby_usuario", $data);
@@ -222,4 +211,5 @@ class UserController {
             $this->renderer->render("activate_user",$datos);
         }
     }
+
 }

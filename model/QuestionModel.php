@@ -309,4 +309,159 @@ class QuestionModel {
             return false;
         }
     }
+
+       public function getUsersCorrectAnswerPercentage($startDate, $endDate) {
+        // Generar una consulta SQL para obtener el porcentaje de preguntas respondidas correctamente por usuario
+        $sql = "SELECT u.UserID, u.FullName, COUNT(uq.UserQuestionID) AS TotalQuestions,
+            SUM(q.CorrectCount) AS TotalCorrectAnswers,
+            (SUM(q.CorrectCount) / COUNT(uq.UserQuestionID)) * 100 AS CorrectAnswerPercentage
+            FROM User u
+            LEFT JOIN UserQuestions uq ON u.UserID = uq.UserID
+            LEFT JOIN Questions q ON uq.QuestionID = q.QuestionID
+            INNER JOIN UserGames ug ON u.UserID = ug.UserID
+            WHERE ug.Timestamp >= ? AND ug.Timestamp <= ?
+            GROUP BY u.UserID";
+
+        // Preparar la consulta
+        $stmt = $this->database->prepare($sql);
+
+        if (!$stmt) {
+            // Error al preparar la consulta
+            return false;
+        }
+        $stmt->bind_param("ss", $startDate, $endDate);
+        $stmt->execute();
+    
+        // Obtener el resultado de la consulta
+        $result = $stmt->get_result();
+        // Obtener los resultados de la consulta
+        $usersPercentage = array();
+        $i=0;
+        while ($row = $result->fetch_assoc()) {
+            $userPercentage = array(
+                'UserID' => $row['UserID'],
+                'FullName' => $row['FullName'],
+                'TotalQuestions' => $row['TotalQuestions'],
+                'TotalCorrectAnswers' => $row['TotalCorrectAnswers'],
+                'CorrectAnswerPercentage' => $row['CorrectAnswerPercentage']
+            );
+            $usersPercentage[] = $userPercentage;
+            $charData["FullName"][$i] = $row['FullName'];
+            $charData["CorrectAnswerPercentage"][$i] = $row['CorrectAnswerPercentage'];
+            $i++;
+        }
+    
+        // Devolver el porcentaje de preguntas respondidas correctamente por usuario
+        return $charData;
+    }
+
+    public function getQuestionsCountByCategory() {
+        // Generar una consulta SQL para obtener la cantidad de preguntas creadas por categoría
+        $sql = "SELECT c.CategoryName,c.CategoryColor, COUNT(q.QuestionID) AS QuestionsCount
+                FROM Categories c
+                LEFT JOIN Questions q ON c.CategoryID = q.CategoryID
+                GROUP BY c.CategoryID";
+        
+        // Preparar la consulta
+        $stmt = $this->database->prepare($sql);
+        
+        if (!$stmt) {
+            // Error al preparar la consulta
+            return false;
+        }
+        
+        // Ejecutar la consulta
+        $stmt->execute();
+        
+        // Obtener el resultado de la consulta
+        $result = $stmt->get_result();
+        
+        // Verificar si la consulta se ejecutó correctamente
+        if (!$result) {
+            // Error al ejecutar la consulta
+            $stmt->close();
+            return false;
+        }
+        
+        // Obtener los datos de cantidad de preguntas por categoría
+        $questionsCountByCategory = array();
+            // Obtener el total de preguntas
+        $totalQuestions = 0;
+        while ($row = $result->fetch_assoc()) {
+            $totalQuestions += $row['QuestionsCount'];
+        }
+        $result->data_seek(0); // Reiniciar el puntero del resultado
+        $i=0;
+        while ($row = $result->fetch_assoc()) {
+            $categoryName = $row['CategoryName'];
+            $questionsCount = $row['QuestionsCount'];
+            $percentage = ($questionsCount / $totalQuestions) * 100;
+            $questionsCountByCategory[] = array(
+                "categoryName" => $categoryName,
+                "questionsCount" => $questionsCount
+            );
+            $dataChart["categoryName"][$i]=$row['CategoryName'];
+            $dataChart["percentage"][$i]=$percentage;
+            $dataChart["CategoryColor"][$i]=$row['CategoryColor'];
+            $i++;
+        }
+
+        // Cerrar la consulta
+        $stmt->close();
+        
+        // Devolver la cantidad de preguntas por categoría
+        return $dataChart;
+    }
+
+    public function getGamesCountByCreationDate($startDate, $endDate) {
+        // Generar una consulta SQL para obtener la cantidad de partidas creadas por fecha de creación
+        $sql = "SELECT DATE(Timestamp) AS GameDate, COUNT(GameID) AS GamesCount
+                FROM UserGames
+                WHERE Timestamp >= ? AND Timestamp <= ?
+                GROUP BY DATE(Timestamp)";
+        
+        // Preparar la consulta
+        $stmt = $this->database->prepare($sql);
+        
+        if (!$stmt) {
+            // Error al preparar la consulta
+            return false;
+        }
+        
+        // Asignar los valores de los parámetros y ejecutar la consulta
+        $stmt->bind_param("ss", $startDate, $endDate);
+        $stmt->execute();
+        
+        // Obtener el resultado de la consulta
+        $result = $stmt->get_result();
+        
+        // Verificar si la consulta se ejecutó correctamente
+        if (!$result) {
+            // Error al ejecutar la consulta
+            $stmt->close();
+            return false;
+        }
+        
+        // Obtener los datos de cantidad de partidas por fecha de creación
+        $gamesCountByCreationDate = array();
+        $i=0;
+        while ($row = $result->fetch_assoc()) {
+            $gameDate = $row['GameDate'];
+            $gamesCount = $row['GamesCount'];
+            $chart['GameDate'][$i]=$row['GameDate'];
+            $chart['GamesCount'][$i]=$row['GamesCount'];
+            $gamesCountByCreationDate[] = array(
+                "gameDate" => $gameDate,
+                "gamesCount" => $gamesCount
+            );
+            $i++;
+        }
+        
+        // Cerrar la consulta
+        $stmt->close();
+        
+        // Devolver la cantidad de partidas por fecha de creación
+        return $chart;
+    }
+    
 }
