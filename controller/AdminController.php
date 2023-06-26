@@ -50,12 +50,7 @@ class AdminController {
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $startDate = $_POST['startDate'];
                 $endDate = $_POST['endDate'];
-                echo("linea 50");
-                var_dump($endDate);
-                echo("<hr>");
-                echo("linea 53");
-                var_dump($startDate);
-                echo("<hr>");
+
                 $usuariosActivos = $this->userModel->getAccountStatusPlayersCount('Active', $startDate, $endDate);
                 $usuariosPorEdad = $this->userModel->getUsersCountByAgeGroup($startDate, $endDate);
                 $usuariosPorSexo = $this->userModel->getUsersCountByGender($startDate, $endDate);
