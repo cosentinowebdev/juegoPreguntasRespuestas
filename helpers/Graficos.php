@@ -43,7 +43,7 @@ class Graficos{
         $b1plot->SetColor("white");
         $b1plot->SetFillGradient("#4B0082","white",GRAD_LEFT_REFLECTION);
         $b1plot->SetWidth(45);
-        $graph->title->Set("Bar Gradient(Left reflection)");
+        $graph->title->Set("Usuarios Activos por fechas de creación");
         $filename = 'imagen/barchartUsuariosActivos.png';
         // Display the graph
         $graph->Stroke($filename);
@@ -79,7 +79,7 @@ class Graficos{
         $b1plot->SetColor("white");
         $b1plot->SetFillGradient("#4B0082", "white", GRAD_LEFT_REFLECTION);
         $b1plot->SetWidth(45);
-        $graph->title->Set("Bar Gradient(Left reflection)");
+        $graph->title->Set("Usuarios por grupo de edad");
     
         // Generar la ruta y nombre del archivo de imagen
         $filename = 'imagen/barchartUsuariosEdad.png';
@@ -124,7 +124,7 @@ class Graficos{
         $b1plot->SetColor("white");
         $b1plot->SetFillGradient("#4B0082", "white", GRAD_LEFT_REFLECTION);
         $b1plot->SetWidth(45);
-        $graph->title->Set("Bar Gradient(Left reflection)");
+        $graph->title->Set("Usuarios por genero");
     
         // Generar la ruta y nombre del archivo de imagen
         $filename = 'imagen/barchartUsuariosSexo.png';
@@ -169,7 +169,7 @@ class Graficos{
         $b1plot->SetColor("white");
         $b1plot->SetFillGradient("#4B0082", "white", GRAD_LEFT_REFLECTION);
         $b1plot->SetWidth(45);
-        $graph->title->Set("Bar Gradient(Left reflection)");
+        $graph->title->Set("Usuarios por pais");
     
         // Generar la ruta y nombre del archivo de imagen
         $filename = 'imagen/barchartUsuariosPais.png';
@@ -236,8 +236,6 @@ class Graficos{
         // Crear el gráfico de barras
         require_once 'helpers/jpgraph/src/jpgraph.php';
         require_once 'helpers/jpgraph/src/jpgraph_pie.php';
-        // Some data
-        $data = $data["percentage"];
 
         // Create the Pie Graph. 
         $graph = new PieGraph(350,250);
@@ -250,12 +248,14 @@ class Graficos{
         $graph->SetBox(true);
 
         // Create
-        $p1 = new PiePlot($data);
+        $p1 = new PiePlot($data["percentage"]);
         $graph->Add($p1);
-
+        $CategoryColor = $data["CategoryColor"];
         $p1->ShowBorder();
         $p1->SetColor('black');
-        $p1->SetSliceColors($data["CategoryColor"]);
+        $p1->SetSliceColors($CategoryColor);
+
+        $p1->SetLegends($data["categoryName"]);
     
         // Generar la ruta y nombre del archivo de imagen
         $filename = 'imagen/piechartCategoria.png';
@@ -269,7 +269,6 @@ class Graficos{
     
         // Guardar la imagen sobrescribiendo el archivo existente
         file_put_contents($filename, $imageData);
-    
         // Devolver la imagen en formato base64
         return $imageBase64;
     }
@@ -288,7 +287,7 @@ class Graficos{
         
         $graph->SetTheme($theme_class);
         $graph->img->SetAntiAliasing(false);
-        $graph->title->Set('Filled Y-grid');
+        $graph->title->Set('Cantidad de partidas c/dia');
         $graph->SetBox(false);
         
         $graph->SetMargin(40,20,36,63);
