@@ -100,6 +100,81 @@ class QuestionModel {
         $question = $result->fetch_assoc();
         return $question;
     }
+    public function getUnselectedQuestion($userId) {
+        // Obtener todas las preguntas seleccionadas por el usuario
+        $sql = "SELECT QuestionID FROM UserQuestions WHERE UserID = ?";
+        $stmt = $this->database->prepare($sql);
+        $stmt->bind_param("i", $userId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        // Crear un array con los IDs de las preguntas seleccionadas
+        $selectedQuestionIds = [];
+        while ($row = $result->fetch_assoc()) {
+            $selectedQuestionIds[] = $row['QuestionID'];
+        }
+
+        $leastRepeatedNumbers = $this->findMostFrequentQuestions($selectedQuestionIds);
+
+        if ($result->num_rows == 0) {
+            return $this->getRandomQuestion();
+        }
+        // exit();
+        $placeholders = rtrim(str_repeat('?,', count($leastRepeatedNumbers)), ',');
+
+        $sql = "SELECT * FROM Questions WHERE QuestionID NOT IN ($placeholders) AND StateID = 1 ORDER BY RAND() LIMIT 1";
+        
+        $stmt = $this->database->prepare($sql);
+        
+        // Genera el tipo de cadena para los valores de los parámetros
+        $types = str_repeat('i', count($leastRepeatedNumbers));
+        
+        // Crea un array de referencias a los valores
+        $params = array_merge([$types], $leastRepeatedNumbers);
+        $refs = [];
+        foreach ($params as $key => $value) {
+            $refs[$key] = &$params[$key];
+        }
+        
+        // Utiliza la función call_user_func_array para pasar los valores por referencia
+        call_user_func_array([$stmt, 'bind_param'], $refs);
+        
+        $stmt->execute();
+        
+        $result = $stmt->get_result();
+
+        if ($result->num_rows == 0) {
+            return $this->getRandomQuestion();
+        }
+        while ($row = $result->fetch_assoc()) {
+            // Utiliza los datos de la fila como desees
+            $question =$row;
+        }
+        // var_dump($question);
+        // exit();
+        return $question;
+
+    }
+    function findMostFrequentQuestions($questions) {
+        $counts[]=[];
+        $counts = array_count_values($questions);
+
+        if (sizeof($counts) != 0) {
+            $maxCount = max($counts);
+            $mostFrequent = array_keys($counts, $maxCount);
+            return $mostFrequent;
+        } else {
+            return [];
+        }
+        
+        
+    }
+    public function findLeastRepeatedNumbers($numbers) {
+        $counts = array_count_values($numbers);
+        $minCount = min($counts);
+        $leastRepeated = array_keys($counts, $minCount);
+        return $leastRepeated;
+    }
     public function incrementIncorrectCount($questionID) {
         // Generar una consulta SQL para incrementar IncorrectCount en 1
         $sql = "UPDATE Questions SET IncorrectCount = IncorrectCount + 1 WHERE QuestionID = ?";
@@ -271,26 +346,60 @@ class QuestionModel {
         return $success;
     }
 
-    public function updateQuestion($questionID, $questionText, $correctAnswer, $answer1, $answer2, $answer3, $categoryID) {
-        $sql = "UPDATE Questions SET QuestionText = ?, CorrectAnswer = ?, Answer1 = ?, Answer2 = ?, Answer3 = ?, CategoryID = ? 
+    // public function updateQuestion($questionID, $questionText, $correctAnswer, $answer1, $answer2, $answer3, $categoryID) {
+    //     $sql = "UPDATE Questions SET QuestionText = ?, CorrectAnswer = ?, Answer1 = ?, Answer2 = ?, Answer3 = ?, CategoryID = ? 
+    //             WHERE QuestionID = ?";
+    //     $stmt = $this->database->prepare($sql);
+
+    //     if (!$stmt) {
+    //         return false;
+    //     }
+
+    //     $stmt->bind_param("sssssss", $questionText, $correctAnswer, $answer1, $answer2, $answer3, $categoryID, $questionID);
+    //     $success = $stmt->execute();
+    //     $stmt->close();
+
+    //     if ($success) {
+    //         return true;
+    //     } else {
+    //         return false;
+    //     }
+    // }
+    public function updateQuestion($questionID, $questionText, $correctAnswer, $answer1, $answer2, $answer3, $categoryID, $stateID) {
+        // Preparar la consulta SQL para realizar el update
+        $sql = "UPDATE Questions SET
+                    QuestionText = ?,
+                    CorrectAnswer = ?,
+                    Answer1 = ?,
+                    Answer2 = ?,
+                    Answer3 = ?,
+                    CategoryID = ?,
+                    StateID = ?
                 WHERE QuestionID = ?";
+    
+        // Preparar la declaración
         $stmt = $this->database->prepare($sql);
-
+    
+        // Verificar si la declaración se preparó correctamente
         if (!$stmt) {
-            return false;
+            // Error al preparar la consulta
+            return null;
         }
-
-        $stmt->bind_param("sssssss", $questionText, $correctAnswer, $answer1, $answer2, $answer3, $categoryID, $questionID);
-        $success = $stmt->execute();
-        $stmt->close();
-
-        if ($success) {
-            return true;
-        } else {
-            return false;
+    
+        // Asociar los parámetros a la declaración
+        $stmt->bind_param("ssssssii", $questionText, $correctAnswer, $answer1, $answer2, $answer3, $categoryID, $stateID, $questionID);
+    
+        // Ejecutar la consulta
+        if (!$stmt->execute()) {
+            // Error al ejecutar la consulta
+            return null;
         }
+    
+        // Obtener el objeto modificado
+        $updatedQuestion = $this->getQuestionById($questionID);
+        // var_dump($updatedQuestion);
+        return $updatedQuestion;
     }
-
     public function deleteQuestion($questionID) {
         $sql = "DELETE FROM Questions WHERE QuestionID = ?";
         $stmt = $this->database->prepare($sql);

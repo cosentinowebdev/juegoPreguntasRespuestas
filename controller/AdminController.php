@@ -48,13 +48,7 @@ class AdminController {
         // var_dump($data);
         $startDate = '2023-03-01';
         $endDate = '2023-07-01';
-        $usuariosActivos = $this->userModel->getAccountStatusPlayersCount('Active', $startDate, $endDate);
-        $usuariosPorEdad = $this->userModel->getUsersCountByAgeGroup($startDate, $endDate);
-        $usuariosPorSexo = $this->userModel->getUsersCountByGender($startDate, $endDate);
-        $usuariosPorPais = $this->userModel->getUsersCountByCountry($startDate, $endDate);
-        $preguntarCorrectasPorUsuario = $this->questionModel->getUsersCorrectAnswerPercentage($startDate, $endDate);
-        $preguntarPorCategoria = $this->questionModel->getQuestionsCountByCategory();
-        $jugadasPorFecha = $this->questionModel->getGamesCountByCreationDate($startDate, $endDate);
+
 
         if ($data["isLoggedIn"] && ($data["isEditor"] || $data["isAdmin"])) {
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -62,7 +56,13 @@ class AdminController {
                 $endDate = $_POST['endDate'];
 
 
-                
+                $usuariosActivos = $this->userModel->getAccountStatusPlayersCount('Active', $startDate, $endDate);
+                $usuariosPorEdad = $this->userModel->getUsersCountByAgeGroup($startDate, $endDate);
+                $usuariosPorSexo = $this->userModel->getUsersCountByGender($startDate, $endDate);
+                $usuariosPorPais = $this->userModel->getUsersCountByCountry($startDate, $endDate);
+                $preguntarCorrectasPorUsuario = $this->questionModel->getUsersCorrectAnswerPercentage($startDate, $endDate);
+                $preguntarPorCategoria = $this->questionModel->getQuestionsCountByCategory();
+                $jugadasPorFecha = $this->questionModel->getGamesCountByCreationDate($startDate, $endDate);
                 $data["barcharUsuariosActivos"]=$this->graficos->generateUsuariosActivosBarChartBase64($usuariosActivos);
                 
                 $data["barcharUsuariosPorEdad"]=$this->graficos->generateUsuariosEdadBarChartBase64($usuariosPorEdad);
@@ -82,6 +82,14 @@ class AdminController {
             }else if($_SERVER['REQUEST_METHOD'] === 'GET' && $_GET['startDate']){
                 $startDate = $_GET['startDate'];
                 $endDate = $_GET['endDate'];
+
+                $usuariosActivos = $this->userModel->getAccountStatusPlayersCount('Active', $startDate, $endDate);
+                $usuariosPorEdad = $this->userModel->getUsersCountByAgeGroup($startDate, $endDate);
+                $usuariosPorSexo = $this->userModel->getUsersCountByGender($startDate, $endDate);
+                $usuariosPorPais = $this->userModel->getUsersCountByCountry($startDate, $endDate);
+                $preguntarCorrectasPorUsuario = $this->questionModel->getUsersCorrectAnswerPercentage($startDate, $endDate);
+                $preguntarPorCategoria = $this->questionModel->getQuestionsCountByCategory();
+                $jugadasPorFecha = $this->questionModel->getGamesCountByCreationDate($startDate, $endDate);
 
                 $barcharUsuariosActivos=$this->graficos->generateUsuariosActivosBarChartBase64($usuariosActivos);
                 
@@ -183,6 +191,13 @@ class AdminController {
                 // Obtener la fecha del mes anterior a partir de la fecha actual
                 $startDate = date("Y-m-d", strtotime("-1 month", strtotime($endDate)));
                 $startDate = date("Y-m-t", strtotime($startDate));
+                $usuariosActivos = $this->userModel->getAccountStatusPlayersCount('Active', $startDate, $endDate);
+                $usuariosPorEdad = $this->userModel->getUsersCountByAgeGroup($startDate, $endDate);
+                $usuariosPorSexo = $this->userModel->getUsersCountByGender($startDate, $endDate);
+                $usuariosPorPais = $this->userModel->getUsersCountByCountry($startDate, $endDate);
+                $preguntarCorrectasPorUsuario = $this->questionModel->getUsersCorrectAnswerPercentage($startDate, $endDate);
+                $preguntarPorCategoria = $this->questionModel->getQuestionsCountByCategory();
+                $jugadasPorFecha = $this->questionModel->getGamesCountByCreationDate($startDate, $endDate);
 
                 $data["barcharUsuariosActivos"]=$this->graficos->generateUsuariosActivosBarChartBase64($usuariosActivos);
                 

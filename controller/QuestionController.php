@@ -17,11 +17,12 @@ class QuestionController {
     public function list(){
         $questionsData = $this->questionModel->getAllQuestions();
 
+        // $data = $this->session->getData();
+        
         $data = $this->session->getData();
-        $data["questionsData"]= $questionsData;
-        $data = $this->session->getData();
-        if ($data["isLoggedIn"] && ($data["isEditor"] || $data["isAdmin"])) {
 
+        if ($data["isLoggedIn"] && ($data["isEditor"] || $data["isAdmin"])) {
+            $data["questionsData"]= $questionsData;
             $this->renderer->render("list_question", $data);
 
         } else {
@@ -125,6 +126,33 @@ class QuestionController {
                 exit();
             }
 
+        }else if($_SERVER['REQUEST_METHOD'] === 'POST'){
+            $idUpdate = $_POST['questionID'];
+            $question = $this->questionModel->updateQuestion(
+                $_POST['questionID'],
+                $_POST['questionText'],
+                $_POST['correctAnswer'],
+                $_POST['answer1'],
+                $_POST['answer2'],
+                $_POST['answer3'],
+                $_POST['categoryID'],
+                $_POST['stateID']
+            );
+            $data['question']=$question;
+            $data['success']=true;
+    
+            foreach ($categories as &$category) {
+                $category['habilitado'] = ($category['CategoryID'] == $question['CategoryID']);
+            }
+            
+            foreach ($states as &$state) {
+                $state['habilitado'] = ($state['StateID'] == $question['StateID']);
+            }
+
+            $data['categories'] = $categories;
+            $data['states'] = $states;
+
+            $this->renderer->render("edit_question", $data);
         }else{
             $this->renderer->render("list_question", $data);
         }

@@ -26,13 +26,11 @@
                 <td>{{StateName}}</td>
                 <td>
                     <a href="/question/edit?id={{QuestionID}}" class="btn btn-primary">edit</a>
-
                 </td>
             </tr>
             {{/questionsData}}
             </tbody>
         </table>
-
     </div>
     <!-- contenido -->
 {{/isEditor}}
@@ -62,12 +60,13 @@
                 <td>{{QuestionText}}</td>
                 <td>{{CorrectAnswer}}</td>
                 <td>{{StateName}}</td>
-                <td>2</td>
+                <td>
+                    <a href="/question/edit?id={{QuestionID}}" class="btn btn-primary">edit</a>
+                </td>
             </tr>
             {{/questionsData}}
             </tbody>
         </table>
-        
     </div>
     <!-- contenido -->
 {{/isAdmin}}

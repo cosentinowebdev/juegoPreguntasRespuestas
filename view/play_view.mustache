@@ -1,6 +1,13 @@
-{{#isLoggedIn}}
+{{#isEditor}}
+    {{> header_editor}}
+{{/isEditor}}
+
+{{#isAdmin}}
+    {{> header_admin}}
+{{/isAdmin}}
+{{#isUser}}
     {{> header_loged}}
-{{/isLoggedIn}}
+{{/isUser}}
 
 <!-- The Band Section -->
 <p>play</p>

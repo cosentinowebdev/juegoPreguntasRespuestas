@@ -39,29 +39,37 @@ class GameController {
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $QuestionID = $_POST['id'];
                 $questionPrevious = $this->questionModel->getQuestionById($QuestionID);
-                if ($questionPrevious["CorrectAnswer"]==$_POST["answer"]) {
-                    $data["userGame"]=$this->gameModel->updateScoreAndNumQuestions($gameId,1,1,'incomplete');
-                    $this->questionModel->incrementCorrectCount($QuestionID);
-                } else {
-                    $data["userGame"]=$this->gameModel->updateScoreAndNumQuestions($gameId,0,1,'finish');
-                    $data["isFinishResult"]=true;
-                    if (isset($_SESSION['gameId'])) {
-                        unset($_SESSION['gameId']);
-                    }
-                    $finisGame = $this->questionModel->incrementIncorrectCount($QuestionID);
-                }           
+                $lastUserQuestion = $this->UserQuestionModel->getLastUserQuestion($loggedInUserId);
+                if ($QuestionID == $lastUserQuestion["QuestionID"]) {
+                    if ($questionPrevious["CorrectAnswer"]==$_POST["answer"]) {
+                        $data["userGame"]=$this->gameModel->updateScoreAndNumQuestions($gameId,1,1,'incomplete');
+                        $this->questionModel->incrementCorrectCount($QuestionID);
+                    } else {
+                        $data["userGame"]=$this->gameModel->updateScoreAndNumQuestions($gameId,0,1,'finish');
+                        $data["isFinishResult"]=true;
+                        if (isset($_SESSION['gameId'])) {
+                            unset($_SESSION['gameId']);
+                        }
+                        $finisGame = $this->questionModel->incrementIncorrectCount($QuestionID);
+                    }   
+                }else{
+                    $UserGame = $this->gameModel->initGame($loggedInUserId);
+                    $_SESSION['gameId'] = $UserGame['GameID'];
+                    $gameId = $UserGame['GameID'];
+                    $data["userGame"] = $UserGame;
+                }
+        
             }else{
                 $UserGame = $this->gameModel->initGame($loggedInUserId);
                 $_SESSION['gameId'] = $UserGame['GameID'];
                 $gameId = $UserGame['GameID'];
                 $data["userGame"] = $UserGame;
             }
-            $data["question"]=$this->questionModel->getRandomQuestion();
+            $data["question"]=$this->questionModel->getUnselectedQuestion($loggedInUserId);
             $QuestionID=$data["question"]["QuestionID"];
             if(!$finisGame){
                 $this->UserQuestionModel->createUserQuestion($loggedInUserId,$QuestionID,$gameId);
             }
-            //$userID, $questionID, $gameID
             $data["questionAnswers"]=[$data["question"]["CorrectAnswer"],$data["question"]["Answer1"],$data["question"]["Answer2"],$data["question"]["Answer3"]];
             shuffle($data["questionAnswers"]);
 

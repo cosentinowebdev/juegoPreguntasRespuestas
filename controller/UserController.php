@@ -169,7 +169,7 @@ class UserController {
         
     }
     public function ranking() {
-
+        $data = $this->session->getData();
         // Iniciar la sesión si aún no está iniciada
         if (session_status() === PHP_SESSION_NONE) {
             session_start();

@@ -1,7 +1,13 @@
-{{#isLoggedIn}}
-    {{> header_loged}}
-{{/isLoggedIn}}
+{{#isEditor}}
+    {{> header_editor}}
+{{/isEditor}}
 
+{{#isAdmin}}
+    {{> header_admin}}
+{{/isAdmin}}
+{{#isUser}}
+    {{> header_loged}}
+{{/isUser}}
 <!-- The Band Section -->
 
 <p> Reportar Pregunta</p>

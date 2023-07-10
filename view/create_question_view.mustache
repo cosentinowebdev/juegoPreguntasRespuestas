@@ -5,6 +5,9 @@
 {{#isAdmin}}
     {{> header_admin}}
 {{/isAdmin}}
+{{#isUser}}
+    {{> header_loged}}
+{{/isUser}}
     </div>
     <div class="container">
       <h1>Crear Pregunta</h1>

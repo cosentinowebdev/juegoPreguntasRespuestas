@@ -9,10 +9,9 @@
 <div class="container">
     <h1>Editar Pregunta</h1>
     <a href="/question/list" class="btn btn-primary">Volver</a>
-    {{^success}}
-    <form method="POST" action="/question/update">
+    <form method="POST" action="/question/edit">
         {{#question}}
-            <input type="hidden" name="questionID" value="{{QuestionID}}">
+            
             
             <div class="form-group">
                 <label for="questionText">Texto de la Pregunta:</label>
@@ -56,10 +55,11 @@
                     {{/states}}
                 </select>
             </div>
+            <input type="hidden" name="questionID" value="{{QuestionID}}">
         {{/question}}
         <button type="submit" class="btn btn-primary">Guardar Cambios</button>
     </form>
-    {{/success}}
+ 
     
     {{#success}}
     <div class="alert alert-success" role="alert">

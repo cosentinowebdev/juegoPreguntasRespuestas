@@ -2,10 +2,16 @@
     {{> header}}
     
 {{/isLoggedIn}}
-{{^isLoggedIn}}
-    {{> header}}
-    <p>Por favor, inicie sesión.</p>
-{{/isLoggedIn}}
+{{#isEditor}}
+    {{> header_editor}}
+{{/isEditor}}
+
+{{#isAdmin}}
+    {{> header_admin}}
+{{/isAdmin}}
+{{#isUser}}
+    {{> header_loged}}
+{{/isUser}}
 <!-- The Band Section -->
 <p>crear usuario</p>
 <div class="container">

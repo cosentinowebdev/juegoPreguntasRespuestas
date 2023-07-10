@@ -1,11 +1,13 @@
-{{#isLoggedIn}}
+{{#isEditor}}
+    {{> header_editor}}
+{{/isEditor}}
+
+{{#isAdmin}}
+    {{> header_admin}}
+{{/isAdmin}}
+{{#isUser}}
     {{> header_loged}}
-    
-{{/isLoggedIn}}
-{{^isLoggedIn}}
-    {{> header}}
-    <p>Por favor, inicie sesión.</p>
-{{/isLoggedIn}}
+{{/isUser}}
 
 {{#userData}}
     <!-- The User Section -->

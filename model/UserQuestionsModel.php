@@ -107,4 +107,28 @@ class UserQuestionModel {
         return true;
     }
     
+    public function getLastUserQuestion($userId) {
+        $sql = "SELECT *
+                FROM UserQuestions
+                WHERE UserID = ?
+                ORDER BY UserQuestionID DESC
+                LIMIT 1";
+        
+        $stmt = $this->database->prepare($sql);
+        $stmt->bind_param("i", $userId);
+        
+        if (!$stmt->execute()) {
+            return null;
+        }
+        
+        $result = $stmt->get_result();
+        
+        if ($result->num_rows === 0) {
+            return null;
+        }
+        
+        $userQuestion = $result->fetch_assoc();
+        return $userQuestion;
+    }
+
 }
