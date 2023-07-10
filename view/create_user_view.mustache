@@ -12,67 +12,131 @@
 {{#isUser}}
     {{> header_loged}}
 {{/isUser}}
+{{^isLoggedIn}}
+    {{> header}}
+{{/isLoggedIn}}
+<script src = "http://maps.googleapis.com/maps/api/js?key=AIzaSyAiq3xISXSZYgkd9GDAOdajy4NK2d3L7dY"></script>
+<script>
+    function loadMap() {
+
+        var mapOptions = {
+            center:new google.maps.LatLng(-34.6686986,-58.5614947),
+            zoom:12,
+            mapTypeId:google.maps.MapTypeId.HYBRID
+        };
+
+        var map = new google.maps.Map(document.getElementById("mapa"),mapOptions);
+
+        var geocoder = new google.maps.Geocoder();
+
+        var marker = new google.maps.Marker({
+            map: map,
+            draggable: true ,
+            animation: google.maps.Animation.DROP
+        });
+
+        google.maps.event.addListener(map, 'click', function(event) {
+            marker.setPosition(event.latLng);
+            geocoder.geocode({
+                'latLng': event.latLng
+            }, function(results, status) {
+                if (status == google.maps.GeocoderStatus.OK) {
+                    if (results[0]) {
+                        var addressComponents = results[0].address_components;
+                        var country = null;
+                        var province = null;
+                        var locality = null;
+
+                        for (var i = 0; i < addressComponents.length; i++) {
+                            var types = addressComponents[i].types;
+                            if (types.indexOf('country') !== -1) {
+                                country = addressComponents[i].long_name;
+                            } else if (types.indexOf('administrative_area_level_1') !== -1) {
+                                province = addressComponents[i].long_name;
+                            } else if (types.indexOf('administrative_area_level_2') !== -1) {
+                                locality = addressComponents[i].long_name;
+                            }
+                        }
+                        if(locality !=null && province!=null && country!=null){
+                            document.getElementById("country").value = country;
+                            document.getElementById("city").value = `${province} , ${locality}`;
+                        }else{
+                            console.error("seleccione en el mapa un lugar valido");
+                            alert("seleccione en el mapa un lugar valido");
+                        }
+                    }
+                }
+            });
+        });
+
+    }
+</script>
+</div>
 <!-- The Band Section -->
-<p>crear usuario</p>
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <form action="/user/createUser" method="post" enctype="multipart/form-data">
-                <div class="mb-3">
-                    <label for="fullname" class="form-label">Full Name:</label>
-                    <input type="text" class="form-control" id="fullname" name="fullname" required>
-                </div>
+    <p>crear usuario</p>
+    <div class="container" >
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <form action="/user/createUser" method="post" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="fullname" class="form-label">Full Name:</label>
+                        <input type="text" class="form-control" id="fullname" name="fullname" required>
+                    </div>
 
-                <div class="mb-3">
-                    <label for="birthyear" class="form-label">Birth Year:</label>
-                    <input type="number" class="form-control" id="birthyear" name="birthyear" required>
-                </div>
+                    <div class="mb-3">
+                        <label for="birthyear" class="form-label">Birth Year:</label>
+                        <input type="number" class="form-control" id="birthyear" name="birthyear" required>
+                    </div>
 
-                <div class="mb-3">
-                    <label for="gender" class="form-label">Gender:</label>
-                    <input type="text" class="form-control" id="gender" name="gender" required>
-                </div>
+                    <div class="mb-3">
+                        <label for="gender" class="form-label">Gender:</label>
+                        <input type="text" class="form-control" id="gender" name="gender" required>
+                    </div>
 
-                <div class="mb-3">
-                    <label for="country" class="form-label">Country:</label>
-                    <input type="text" class="form-control" id="country" name="country" required>
-                </div>
+                    <div id="mapa" style="width:500px; height:400px;"></div>
 
-                <div class="mb-3">
-                    <label for="city" class="form-label">City:</label>
-                    <input type="text" class="form-control" id="city" name="city" required>
-                </div>
+                    <div class="mb-3">
+                        <label for="country" class="form-label">Country:</label>
+                        <input type="text" class="form-control" id="country" name="country" required readonly>
+                    </div>
 
-                <div class="mb-3">
-                    <label for="email" class="form-label">Email:</label>
-                    <input type="email" class="form-control" id="email" name="email" required>
-                </div>
+                    <div class="mb-3">
+                        <label for="city" class="form-label">City:</label>
+                        <input type="text" class="form-control" id="city" name="city" required readonly>
+                    </div>
 
-                <div class="mb-3">
-                    <label for="password" class="form-label">Password:</label>
-                    <input type="password" class="form-control" id="password" name="password" required>
-                </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email:</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
 
-                <div class="mb-3">
-                    <label for="username" class="form-label">Username:</label>
-                    <input type="text" class="form-control" id="username" name="username" required>
-                </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password:</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
 
-                <div class="mb-3">
-                    <label for="profilepicture" class="form-label">Profile Picture:</label>
-                    <input type="file" class="form-control" id="profilepicture" name="profilepicture" required>
-                </div>
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username:</label>
+                        <input type="text" class="form-control" id="username" name="username" required>
+                    </div>
 
-                <button type="submit" class="btn btn-primary">Register</button>
-            </form>
-            {{#error}}
-                <div class="alert alert-danger" role="alert">
-                    El usuario o email ya esta en uso
-                </div>
-            {{/error}}
+                    <div class="mb-3">
+                        <label for="profilepicture" class="form-label">Profile Picture:</label>
+                        <input type="file" class="form-control" id="profilepicture" name="profilepicture" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Register</button>
+                </form>
+                {{#error}}
+                    <div class="alert alert-danger" role="alert">
+                        El usuario o email ya esta en uso
+                    </div>
+                {{/error}}
+            </div>
         </div>
     </div>
-</div>
+<script>
+loadMap();
+</script>
 
-</div>
 {{> footer}}

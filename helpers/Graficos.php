@@ -43,7 +43,7 @@ class Graficos{
         $b1plot->SetColor("white");
         $b1plot->SetFillGradient("#4B0082","white",GRAD_LEFT_REFLECTION);
         $b1plot->SetWidth(45);
-        $graph->title->Set("Usuarios Activos por fechas de creación");
+        $graph->title->Set("Usuarios Activos por fechas ");
         $filename = 'imagen/barchartUsuariosActivos.png';
         // Display the graph
         $graph->Stroke($filename);

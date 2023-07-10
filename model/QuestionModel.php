@@ -250,11 +250,31 @@ class QuestionModel {
     
         // Asignar una etiqueta de dificultad según el valor obtenido
         if ($difficulty < 3) {
-            return "Fácil";
+            return "Easy";
         } elseif ($difficulty < 7) {
             return "Normal";
         } else {
-            return "Difícil";
+            return "Hard";
+        }
+    }
+    public function changeQuestionDifficulty($questionID) {
+        $sql = "UPDATE Questions SET Difficulty = ? WHERE QuestionID = ?";
+        
+        $stmt = $this->database->prepare($sql);
+
+        if (!$stmt) {
+            return false;
+        }
+        $Difficulty = $this->calculateQuestionDifficulty($questionID);
+
+        $stmt->bind_param("ss", $Difficulty, $questionID);
+        $success = $stmt->execute();
+        $stmt->close();
+
+        if ($success) {
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -419,50 +439,51 @@ class QuestionModel {
         }
     }
 
-       public function getUsersCorrectAnswerPercentage($startDate, $endDate) {
-        // Generar una consulta SQL para obtener el porcentaje de preguntas respondidas correctamente por usuario
-        $sql = "SELECT u.UserID, u.FullName, COUNT(uq.UserQuestionID) AS TotalQuestions,
-            SUM(q.CorrectCount) AS TotalCorrectAnswers,
-            (SUM(q.CorrectCount) / COUNT(uq.UserQuestionID)) * 100 AS CorrectAnswerPercentage
-            FROM User u
-            LEFT JOIN UserQuestions uq ON u.UserID = uq.UserID
-            LEFT JOIN Questions q ON uq.QuestionID = q.QuestionID
-            INNER JOIN UserGames ug ON u.UserID = ug.UserID
-            WHERE ug.Timestamp >= ? AND ug.Timestamp <= ?
-            GROUP BY u.UserID";
+    //    public function getUsersCorrectAnswerPercentage($startDate, $endDate) {
+    //     // Generar una consulta SQL para obtener el porcentaje de preguntas respondidas correctamente por usuario
+    //     $sql = "SELECT u.UserID, u.FullName, COUNT(uq.UserQuestionID) AS TotalQuestions,
+    //         SUM(q.CorrectCount) AS TotalCorrectAnswers,
+    //         (SUM(q.CorrectCount) / COUNT(uq.UserQuestionID)) * 100 AS CorrectAnswerPercentage
+    //         FROM User u
+    //         LEFT JOIN UserQuestions uq ON u.UserID = uq.UserID
+    //         LEFT JOIN Questions q ON uq.QuestionID = q.QuestionID
+    //         INNER JOIN UserGames ug ON u.UserID = ug.UserID
+    //         WHERE ug.Timestamp >= ? AND ug.Timestamp <= ?
+    //         GROUP BY u.UserID";
 
-        // Preparar la consulta
-        $stmt = $this->database->prepare($sql);
+    //     // Preparar la consulta
+    //     $stmt = $this->database->prepare($sql);
 
-        if (!$stmt) {
-            // Error al preparar la consulta
-            return false;
-        }
-        $stmt->bind_param("ss", $startDate, $endDate);
-        $stmt->execute();
+    //     if (!$stmt) {
+    //         // Error al preparar la consulta
+    //         return false;
+    //     }
+    //     $stmt->bind_param("ss", $startDate, $endDate);
+    //     $stmt->execute();
     
-        // Obtener el resultado de la consulta
-        $result = $stmt->get_result();
-        // Obtener los resultados de la consulta
-        $usersPercentage = array();
-        $i=0;
-        while ($row = $result->fetch_assoc()) {
-            $userPercentage = array(
-                'UserID' => $row['UserID'],
-                'FullName' => $row['FullName'],
-                'TotalQuestions' => $row['TotalQuestions'],
-                'TotalCorrectAnswers' => $row['TotalCorrectAnswers'],
-                'CorrectAnswerPercentage' => $row['CorrectAnswerPercentage']
-            );
-            $usersPercentage[] = $userPercentage;
-            $charData["FullName"][$i] = $row['FullName'];
-            $charData["CorrectAnswerPercentage"][$i] = $row['CorrectAnswerPercentage'];
-            $i++;
-        }
-    
-        // Devolver el porcentaje de preguntas respondidas correctamente por usuario
-        return $charData;
-    }
+    //     // Obtener el resultado de la consulta
+    //     $result = $stmt->get_result();
+    //     // Obtener los resultados de la consulta
+    //     $usersPercentage = array();
+    //     $i=0;
+    //     while ($row = $result->fetch_assoc()) {
+    //         $userPercentage = array(
+    //             'UserID' => $row['UserID'],
+    //             'FullName' => $row['FullName'],
+    //             'TotalQuestions' => $row['TotalQuestions'],
+    //             'TotalCorrectAnswers' => $row['TotalCorrectAnswers'],
+    //             'CorrectAnswerPercentage' => $row['CorrectAnswerPercentage']
+    //         );
+    //         $usersPercentage[] = $userPercentage;
+    //         $charData["FullName"][$i] = $row['FullName'];
+    //         $charData["CorrectAnswerPercentage"][$i] = ((int)$row['TotalCorrectAnswers']*100)/(int)$row['TotalQuestions'];
+    //         $i++;
+    //     }
+    //     var_dump($charData);
+    //     exit();
+    //     // Devolver el porcentaje de preguntas respondidas correctamente por usuario
+    //     return $charData;
+    // }
 
     public function getQuestionsCountByCategory() {
         // Generar una consulta SQL para obtener la cantidad de preguntas creadas por categoría

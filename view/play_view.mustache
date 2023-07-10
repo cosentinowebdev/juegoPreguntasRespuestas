@@ -10,7 +10,17 @@
 {{/isUser}}
 
 <!-- The Band Section -->
-<p>play</p>
+
+        {{#userData}}
+        <!-- The User Section -->
+        <div class="container">
+            <h1>Detalles del usuario</h1>
+            <ul class="list-group">
+                <li class="list-group-item">Nombre : {{FullName}}</li>
+                <li class="list-group-item">Nivel : {{nivel}}</li>
+            </ul>
+        </div>
+        {{/userData}}
     {{#userGame}}
         {{^isFinishResult}}  
             {{#question}}

@@ -168,7 +168,46 @@ class UserModel {
         }
         
     }
+    public function getUsersCorrectAnswerPercentage(){
+        // Generar una consulta SQL para obtener el puntaje total y el total de partidas ganadas agrupados por usuario
+        $sql = "SELECT u.UserID, u.FullName, u.Username, SUM(ug.Score) AS TotalScore,SUM(ug.NumQuestions) AS TotalQuestions, COUNT(CASE WHEN ug.Result = 'finish' THEN 1 END) AS TotalWins
+                FROM User u
+                INNER JOIN UserGames ug ON u.UserID = ug.UserID
+                GROUP BY u.UserID
+                ORDER BY TotalScore DESC";
 
+        // Ejecutar la consulta en la base de datos
+        $result = $this->database->query($sql);
+
+        // Verificar si la consulta se ejecutó correctamente
+        if (!$result) {
+            // Error al ejecutar la consulta
+            return false;
+        }
+
+        // // Obtener los usuarios clasificados por puntaje con sus datos
+        $users = array();
+        // while ($row = $result->fetch_assoc()) {
+        //     $users[] = $row;
+        // }
+        foreach ($result as $key => $value) {
+            // var_dump($value);
+            // exit();
+            $charData["FullName"][$key]=$value["FullName"];
+            $charData["CorrectAnswerPercentage"][$key]=  ($value["TotalScore"]*100)/$value["TotalQuestions"];
+            $users[$key] = $value;
+            $users[$key]["nivel"] = $this->calcularNivelUsuario($value["TotalScore"],$value["TotalWins"]);
+        }
+//         while ($row = $result->fetch_assoc()) {
+// var_dump($row);
+// exit();
+// // $charData["FullName"][$i] = $row['FullName'];
+// // $charData["CorrectAnswerPercentage"][$i] = ((int)$row['TotalCorrectAnswers']*100)/(int)$row['TotalQuestions'];
+//         }
+        
+        // Devolver los usuarios clasificados por puntaje
+        return $charData;
+    }
     public function getUsersRankedByScore() {
         // Generar una consulta SQL para obtener el puntaje total y el total de partidas ganadas agrupados por usuario
         $sql = "SELECT u.UserID, u.FullName, u.Username, SUM(ug.Score) AS TotalScore, COUNT(CASE WHEN ug.Result = 'finish' THEN 1 END) AS TotalWins
@@ -187,13 +226,67 @@ class UserModel {
         }
 
         // // Obtener los usuarios clasificados por puntaje con sus datos
-        // $users = array();
+        $users = array();
         // while ($row = $result->fetch_assoc()) {
         //     $users[] = $row;
         // }
-
+        foreach ($result as $key => $value) {
+            $users[$key] = $value;
+            $users[$key]["nivel"] = $this->calcularNivelUsuario($value["TotalScore"],$value["TotalWins"]);
+        }
         // Devolver los usuarios clasificados por puntaje
-        return $result;
+        return $users;
+    }
+    public function getUserRankedByScore($id) {
+        // Generar una consulta SQL para obtener el puntaje total y el total de partidas ganadas agrupados por usuario
+        $sql = "SELECT u.UserID, u.FullName, u.Username, SUM(ug.Score) AS TotalScore, COUNT(CASE WHEN ug.Result = 'finish' THEN 1 END) AS TotalWins
+                FROM User u
+                INNER JOIN UserGames ug ON u.UserID = ug.UserID
+                WHERE u.UserID = ?
+                GROUP BY u.UserID, u.FullName, u.Username";
+    
+        // Ejecutar la consulta en la base de datos
+        $stmt = $this->database->prepare($sql);
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+    
+        // Verificar si la consulta se ejecutó correctamente
+        if (!$result) {
+            // Error al ejecutar la consulta
+            return false;
+        }
+    
+        // Obtener los usuarios clasificados por puntaje con sus datos
+        $users = array();
+        while ($row = $result->fetch_assoc()) {
+            $row["nivel"] = $this->calcularNivelUsuario($row["TotalScore"], $row["TotalWins"]);
+            $users[] = $row;
+        }
+    
+        // Devolver los usuarios clasificados por puntaje
+        return $users;
+    }
+    public function calcularNivelUsuario($score, $partidas) {
+        // Define los criterios de nivel con sus etiquetas
+        $criteriosNivel = [
+            'easy' => ['score' => 0, 'partidas' => 1],
+            'medium' => ['score' => 100, 'partidas' => 3],
+            'hard' => ['score' => 200, 'partidas' => 5],
+            // Agrega más niveles y criterios según sea necesario
+        ];
+    
+        // Recorre los criterios de nivel para determinar el nivel actual del usuario
+        $nivelActual = 'easy'; // Nivel predeterminado
+        foreach ($criteriosNivel as $nivel => $criterio) {
+            if ($score >= $criterio['score'] && $partidas >= $criterio['partidas']) {
+                $nivelActual = $nivel;
+            } else {
+                break;
+            }
+        }
+    
+        return $nivelActual;
     }
     public function getAccountStatusPlayersCountDeprecado($status) {
         
@@ -373,6 +466,8 @@ class UserModel {
         return $charData;
     }
     public function getUsersCountByGender($startDate, $endDate) {
+
+
         // Generar una consulta SQL para contar la cantidad de usuarios por sexo
         $sql = "SELECT Gender, COUNT(DISTINCT User.UserID) AS UsersCount
                 FROM User
@@ -403,6 +498,7 @@ class UserModel {
         // Obtener los resultados de la consulta
         $usersCountByGender = array();
         $i=0;
+
         while ($row = $result->fetch_assoc()) {
             $gender = $row['Gender'];
             $usersCount = $row['UsersCount'];

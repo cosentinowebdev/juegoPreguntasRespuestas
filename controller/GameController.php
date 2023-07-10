@@ -14,13 +14,15 @@ class GameController {
         $ReportedQuestionModel,
         $UserQuestionModel,
         $renderer,
-        $session) {
+        $session,
+        $userModel) {
         $this->gameModel = $gameModel;
         $this->questionModel = $questionModel;
         $this->renderer = $renderer;
         $this->ReportedQuestionModel = $ReportedQuestionModel;
         $this->UserQuestionModel = $UserQuestionModel;
         $this->session = $session;
+        $this->userModel = $userModel;
     }
     public function list(){
         $baseUrl = dirname($_SERVER['SCRIPT_NAME']);
@@ -34,6 +36,8 @@ class GameController {
         $gameId = $data["gameId"];
         $QuestionID="";
         $finisGame = false;
+        $user = $this->userModel->getUserRankedByScore($loggedInUserId);
+        $data["userData"]=$user;
         if ($data["isLoggedIn"]) {
             
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -41,6 +45,7 @@ class GameController {
                 $questionPrevious = $this->questionModel->getQuestionById($QuestionID);
                 $lastUserQuestion = $this->UserQuestionModel->getLastUserQuestion($loggedInUserId);
                 if ($QuestionID == $lastUserQuestion["QuestionID"]) {
+                    $this->questionModel->changeQuestionDifficulty($lastUserQuestion);
                     if ($questionPrevious["CorrectAnswer"]==$_POST["answer"]) {
                         $data["userGame"]=$this->gameModel->updateScoreAndNumQuestions($gameId,1,1,'incomplete');
                         $this->questionModel->incrementCorrectCount($QuestionID);

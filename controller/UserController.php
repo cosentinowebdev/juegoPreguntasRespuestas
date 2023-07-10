@@ -178,6 +178,7 @@ class UserController {
         $isLoggedIn = isset($_SESSION['isLoggedIn']) && $_SESSION['isLoggedIn'] === true;
         $loggedInUserId = isset($_SESSION['userId']) ? $_SESSION['userId'] : null;
         $usersData = $this->userModel->getUsersRankedByScore();
+        // $nivel = $this->userModel->calcularNivelUsuario();
         $data["isLoggedIn"]=$isLoggedIn;
         $data["userData"]= $usersData;
         if ($isLoggedIn && $usersData) {

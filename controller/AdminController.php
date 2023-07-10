@@ -60,7 +60,7 @@ class AdminController {
                 $usuariosPorEdad = $this->userModel->getUsersCountByAgeGroup($startDate, $endDate);
                 $usuariosPorSexo = $this->userModel->getUsersCountByGender($startDate, $endDate);
                 $usuariosPorPais = $this->userModel->getUsersCountByCountry($startDate, $endDate);
-                $preguntarCorrectasPorUsuario = $this->questionModel->getUsersCorrectAnswerPercentage($startDate, $endDate);
+                $preguntarCorrectasPorUsuario = $this->userModel->getUsersCorrectAnswerPercentage($startDate, $endDate);
                 $preguntarPorCategoria = $this->questionModel->getQuestionsCountByCategory();
                 $jugadasPorFecha = $this->questionModel->getGamesCountByCreationDate($startDate, $endDate);
                 $data["barcharUsuariosActivos"]=$this->graficos->generateUsuariosActivosBarChartBase64($usuariosActivos);
@@ -87,7 +87,7 @@ class AdminController {
                 $usuariosPorEdad = $this->userModel->getUsersCountByAgeGroup($startDate, $endDate);
                 $usuariosPorSexo = $this->userModel->getUsersCountByGender($startDate, $endDate);
                 $usuariosPorPais = $this->userModel->getUsersCountByCountry($startDate, $endDate);
-                $preguntarCorrectasPorUsuario = $this->questionModel->getUsersCorrectAnswerPercentage($startDate, $endDate);
+                $preguntarCorrectasPorUsuario = $this->userModel->getUsersCorrectAnswerPercentage($startDate, $endDate);
                 $preguntarPorCategoria = $this->questionModel->getQuestionsCountByCategory();
                 $jugadasPorFecha = $this->questionModel->getGamesCountByCreationDate($startDate, $endDate);
 
@@ -118,7 +118,7 @@ class AdminController {
                 </head>
                 <body>
                     <div style='width: 210mm; height: 297mm; margin: 20mm auto; font-family: Arial, sans-serif;'>
-                        <h2 style='font-size: 24px; font-weight: bold; margin-bottom: 20px;'>Estadisticas</h2>
+                        <h2 style='font-size: 24px; font-weight: bold; margin-bottom: 20px;'>Estadisticas $startDate - $endDate</h2>
                         <div style='display: flex; flex-wrap: wrap;'>
                             <!-- Imagen 1 -->
                             <div style='width: 33%; padding-right: 10px; margin-bottom: 20px;'>
@@ -195,7 +195,7 @@ class AdminController {
                 $usuariosPorEdad = $this->userModel->getUsersCountByAgeGroup($startDate, $endDate);
                 $usuariosPorSexo = $this->userModel->getUsersCountByGender($startDate, $endDate);
                 $usuariosPorPais = $this->userModel->getUsersCountByCountry($startDate, $endDate);
-                $preguntarCorrectasPorUsuario = $this->questionModel->getUsersCorrectAnswerPercentage($startDate, $endDate);
+                $preguntarCorrectasPorUsuario = $this->userModel->getUsersCorrectAnswerPercentage($startDate, $endDate);
                 $preguntarPorCategoria = $this->questionModel->getQuestionsCountByCategory();
                 $jugadasPorFecha = $this->questionModel->getGamesCountByCreationDate($startDate, $endDate);
 

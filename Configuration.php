@@ -56,7 +56,10 @@ class Configuration {
                 $this->getDatabase()
             ),
             $this->getRenderer(),
-            new Session()
+            new Session(),
+            new UserModel(
+                $this->getDatabase()
+            )
         );
     }
     public function getAdminController(){

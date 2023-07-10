@@ -8,10 +8,11 @@
 {{#isUser}}
     {{> header_loged}}
 {{/isUser}}
-
-{{isLoggedIn}}
+{{^isLoggedIn}}
+    {{> header}}
+{{/isLoggedIn}}
 <!-- The Band Section -->
-<p>inicio</p>
+
 
 <!-- End Page Content -->
 </div>

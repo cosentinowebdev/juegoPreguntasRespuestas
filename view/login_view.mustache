@@ -12,6 +12,9 @@
 {{#isUser}}
     {{> header_loged}}
 {{/isUser}}
+{{^isLoggedIn}}
+    {{> header}}
+{{/isLoggedIn}}
 <!-- The Band Section -->
  
 <div>
