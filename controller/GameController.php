@@ -70,7 +70,7 @@ class GameController {
                 $gameId = $UserGame['GameID'];
                 $data["userGame"] = $UserGame;
             }
-            $data["question"]=$this->questionModel->getUnselectedQuestion($loggedInUserId);
+            $data["question"]=$this->questionModel->getUnselectedQuestionDifficulty($loggedInUserId,$user["nivel"]);
             $QuestionID=$data["question"]["QuestionID"];
             if(!$finisGame){
                 $this->UserQuestionModel->createUserQuestion($loggedInUserId,$QuestionID,$gameId);

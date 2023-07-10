@@ -155,6 +155,68 @@ class QuestionModel {
         return $question;
 
     }
+    public function getUnselectedQuestionDifficulty($userId, $difficulty) {
+        // Obtener todas las preguntas seleccionadas por el usuario
+        $sql = "SELECT QuestionID FROM UserQuestions WHERE UserID = ?";
+        $stmt = $this->database->prepare($sql);
+        $stmt->bind_param("i", $userId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        // Crear un array con los IDs de las preguntas seleccionadas
+        $selectedQuestionIds = [];
+        while ($row = $result->fetch_assoc()) {
+            $selectedQuestionIds[] = $row['QuestionID'];
+        }
+    
+        $leastRepeatedNumbers = $this->findMostFrequentQuestions($selectedQuestionIds);
+    
+        if ($result->num_rows == 0) {
+            return $this->getRandomQuestion();
+        }
+    
+        // Generar la parte de la consulta SQL para filtrar por la dificultad
+        $difficultyCondition = "";
+        if ($difficulty == "Easy" || $difficulty == "Medium" || $difficulty == "Hard") {
+            $difficultyCondition = " AND Difficulty = ?";
+        }
+    
+        $placeholders = rtrim(str_repeat('?,', count($leastRepeatedNumbers)), ',');
+    
+        $sql = "SELECT * FROM Questions WHERE QuestionID NOT IN ($placeholders) AND StateID = 1 $difficultyCondition ORDER BY RAND() LIMIT 1";
+        
+        $stmt = $this->database->prepare($sql);
+    
+        // Genera el tipo de cadena para los valores de los parámetros
+        $types = str_repeat('i', count($leastRepeatedNumbers));
+        
+        // Crea un array de referencias a los valores
+        $params = array_merge([$types], $leastRepeatedNumbers);
+    
+        // Si se especifica una dificultad válida, agrega el valor correspondiente al array de parámetros
+        if ($difficultyCondition != "") {
+            $params[] = $difficulty;
+        }
+    
+        $refs = [];
+        foreach ($params as $key => $value) {
+            $refs[$key] = &$params[$key];
+        }
+        
+        // Utiliza la función call_user_func_array para pasar los valores por referencia
+        call_user_func_array([$stmt, 'bind_param'], $refs);
+        
+        $stmt->execute();
+        
+        $result = $stmt->get_result();
+    
+        if ($result->num_rows == 0) {
+            return $this->getRandomQuestion();
+        }
+        
+        $question = $result->fetch_assoc();
+        return $question;
+    }
     function findMostFrequentQuestions($questions) {
         $counts[]=[];
         $counts = array_count_values($questions);
@@ -252,7 +314,7 @@ class QuestionModel {
         if ($difficulty < 3) {
             return "Easy";
         } elseif ($difficulty < 7) {
-            return "Normal";
+            return "Medium";
         } else {
             return "Hard";
         }
@@ -366,25 +428,7 @@ class QuestionModel {
         return $success;
     }
 
-    // public function updateQuestion($questionID, $questionText, $correctAnswer, $answer1, $answer2, $answer3, $categoryID) {
-    //     $sql = "UPDATE Questions SET QuestionText = ?, CorrectAnswer = ?, Answer1 = ?, Answer2 = ?, Answer3 = ?, CategoryID = ? 
-    //             WHERE QuestionID = ?";
-    //     $stmt = $this->database->prepare($sql);
 
-    //     if (!$stmt) {
-    //         return false;
-    //     }
-
-    //     $stmt->bind_param("sssssss", $questionText, $correctAnswer, $answer1, $answer2, $answer3, $categoryID, $questionID);
-    //     $success = $stmt->execute();
-    //     $stmt->close();
-
-    //     if ($success) {
-    //         return true;
-    //     } else {
-    //         return false;
-    //     }
-    // }
     public function updateQuestion($questionID, $questionText, $correctAnswer, $answer1, $answer2, $answer3, $categoryID, $stateID) {
         // Preparar la consulta SQL para realizar el update
         $sql = "UPDATE Questions SET
@@ -439,51 +483,6 @@ class QuestionModel {
         }
     }
 
-    //    public function getUsersCorrectAnswerPercentage($startDate, $endDate) {
-    //     // Generar una consulta SQL para obtener el porcentaje de preguntas respondidas correctamente por usuario
-    //     $sql = "SELECT u.UserID, u.FullName, COUNT(uq.UserQuestionID) AS TotalQuestions,
-    //         SUM(q.CorrectCount) AS TotalCorrectAnswers,
-    //         (SUM(q.CorrectCount) / COUNT(uq.UserQuestionID)) * 100 AS CorrectAnswerPercentage
-    //         FROM User u
-    //         LEFT JOIN UserQuestions uq ON u.UserID = uq.UserID
-    //         LEFT JOIN Questions q ON uq.QuestionID = q.QuestionID
-    //         INNER JOIN UserGames ug ON u.UserID = ug.UserID
-    //         WHERE ug.Timestamp >= ? AND ug.Timestamp <= ?
-    //         GROUP BY u.UserID";
-
-    //     // Preparar la consulta
-    //     $stmt = $this->database->prepare($sql);
-
-    //     if (!$stmt) {
-    //         // Error al preparar la consulta
-    //         return false;
-    //     }
-    //     $stmt->bind_param("ss", $startDate, $endDate);
-    //     $stmt->execute();
-    
-    //     // Obtener el resultado de la consulta
-    //     $result = $stmt->get_result();
-    //     // Obtener los resultados de la consulta
-    //     $usersPercentage = array();
-    //     $i=0;
-    //     while ($row = $result->fetch_assoc()) {
-    //         $userPercentage = array(
-    //             'UserID' => $row['UserID'],
-    //             'FullName' => $row['FullName'],
-    //             'TotalQuestions' => $row['TotalQuestions'],
-    //             'TotalCorrectAnswers' => $row['TotalCorrectAnswers'],
-    //             'CorrectAnswerPercentage' => $row['CorrectAnswerPercentage']
-    //         );
-    //         $usersPercentage[] = $userPercentage;
-    //         $charData["FullName"][$i] = $row['FullName'];
-    //         $charData["CorrectAnswerPercentage"][$i] = ((int)$row['TotalCorrectAnswers']*100)/(int)$row['TotalQuestions'];
-    //         $i++;
-    //     }
-    //     var_dump($charData);
-    //     exit();
-    //     // Devolver el porcentaje de preguntas respondidas correctamente por usuario
-    //     return $charData;
-    // }
 
     public function getQuestionsCountByCategory() {
         // Generar una consulta SQL para obtener la cantidad de preguntas creadas por categoría

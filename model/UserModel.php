@@ -270,9 +270,9 @@ class UserModel {
     public function calcularNivelUsuario($score, $partidas) {
         // Define los criterios de nivel con sus etiquetas
         $criteriosNivel = [
-            'easy' => ['score' => 0, 'partidas' => 1],
-            'medium' => ['score' => 100, 'partidas' => 3],
-            'hard' => ['score' => 200, 'partidas' => 5],
+            'Easy' => ['score' => 0, 'partidas' => 1],
+            'Medium' => ['score' => 100, 'partidas' => 3],
+            'Hard' => ['score' => 200, 'partidas' => 5],
             // Agrega más niveles y criterios según sea necesario
         ];
     
