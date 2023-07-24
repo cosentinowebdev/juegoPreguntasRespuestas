@@ -73,10 +73,10 @@
 </script>
 </div>
 <!-- The Band Section -->
-    <p>crear usuario</p>
     <div class="container" >
         <div class="row justify-content-center">
             <div class="col-md-6">
+             <h1>Crea tu usuario</h1>
                 <form action="/user/createUser" method="post" enctype="multipart/form-data">
                     <div class="mb-3">
                         <label for="fullname" class="form-label">Full Name:</label>
@@ -90,7 +90,17 @@
 
                     <div class="mb-3">
                         <label for="gender" class="form-label">Gender:</label>
-                        <input type="text" class="form-control" id="gender" name="gender" required>
+                        <select class="form-control" id="gender" name="gender" required>
+                            <option value="" disabled selected>Select a gender</option>
+                            {{#genders}}
+                                <option value="{{.}}">{{.}}</option>
+                            {{/genders}}
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="otherGender" class="form-label">Other Gender:</label>
+                        <input type="text" class="form-control" id="otherGender" name="otherGender" disabled>
                     </div>
 
                     <div id="mapa" style="width:500px; height:400px;"></div>
@@ -137,6 +147,21 @@
     </div>
 <script>
 loadMap();
+// Obtener elementos del DOM
+const genderSelect = document.getElementById("gender");
+const otherGenderInput = document.getElementById("otherGender");
+
+// Agregar evento al cambio de selección en el campo de género
+genderSelect.addEventListener("change", function () {
+    if (genderSelect.value === "other") {
+        // Si selecciona "Other", habilitar el campo de entrada de texto para el género
+        otherGenderInput.disabled = false;
+    } else {
+        // Si selecciona otro género, deshabilitar el campo de entrada de texto
+        otherGenderInput.disabled = true;
+        otherGenderInput.value = ""; // Limpiar el valor del campo de entrada de texto
+    }
+});
 </script>
 
 {{> footer}}

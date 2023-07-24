@@ -115,7 +115,7 @@ class UserModel {
             $qrCodeBase64 = base64_encode($imageData);
             $this->saveQrCode($userId,$qrCodeBase64);
             unlink($tempImagePath);
-            return true; // Registro exitoso
+            return $userId; // Registro exitoso
         } else {
             return false; // Error al registrar el usuario
         }
@@ -156,7 +156,7 @@ class UserModel {
         }
     }
     public function activateUser($userID) {
-        $query = "UPDATE User SET AccountStatus = 'active' WHERE UserID = ?";
+        $query = "UPDATE User SET AccountStatus = 'Active' WHERE UserID = ?";
         $stmt = $this->database->prepare($query);
         $stmt->bind_param("i", $userID);
         // $stmt->execute();
@@ -287,6 +287,35 @@ class UserModel {
         }
     
         return $nivelActual;
+    }
+    public function getAllGenders() {
+        $sql = "SELECT DISTINCT Gender FROM User";
+
+
+        // $result = $this->database->query($sql);
+
+        // $genders = [];
+        // while ($row = $result->fetch_assoc()) {
+        //     $genders[] = $row['Gender'];
+        // }
+        // Ejecutar la consulta en la base de datos
+        $stmt = $this->database->prepare($sql);
+        $stmt->execute();
+        $result = $stmt->get_result();
+    
+        // Verificar si la consulta se ejecutó correctamente
+        if (!$result) {
+            // Error al ejecutar la consulta
+            return false;
+        }
+    
+        // Obtener los usuarios clasificados por puntaje con sus datos
+        $genders = array();
+        while ($row = $result->fetch_assoc()) {
+            $genders[] = $row['Gender'];
+        }
+
+        return $genders;
     }
     public function getAccountStatusPlayersCountDeprecado($status) {
         

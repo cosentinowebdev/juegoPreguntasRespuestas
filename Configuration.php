@@ -36,7 +36,10 @@ class Configuration {
             );
     }
     public function getInicioController() {
-        return new InicioController($this->getRenderer());
+        return new InicioController(
+            $this->getRenderer(),
+            new Session()
+        );
     }
     public function getLoginController() {
         return new LoginController(new UserModel($this->getDatabase()),$this->getRenderer());

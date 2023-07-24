@@ -1,5 +1,10 @@
 <?php
-
+require_once('helpers/phpMailer/Exception.php');
+require_once('helpers/phpMailer/PHPMailer.php');
+require_once('helpers/phpMailer/SMTP.php');
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\Exception;
 class UserController {
     private $userModel;
     private $renderer;
@@ -19,7 +24,11 @@ class UserController {
                 // Obtener los datos del formulario
                 $fullName = $_POST['fullname'];
                 $birthYear = $_POST['birthyear'];
-                $gender = $_POST['gender'];
+                if ($_POST['gender'] == "other") {
+                    $gender = $_POST['otherGender'];
+                }else{
+                    $gender = $_POST['gender'];
+                }
                 $country = $_POST['country'];
                 $city = $_POST['city'];
                 $email = $_POST['email'];
@@ -68,13 +77,14 @@ class UserController {
                     }
                     // Crear una instancia del modelo de usuario
                     // Llamar al método para registrar un nuevo usuario
-                    $this->userModel->registerUser($fullName, $birthYear, $gender, $country, $city, $email, $password, $username, $profilePicture, $accountStatus, $role);
-                    // Redireccionar al usuario a la página de inicio
-                    $baseUrl = dirname($_SERVER['SCRIPT_NAME']);
-                    // echo $baseUrl;
-                    // exit();
-                    header("Location: $baseUrl");
-                    exit();
+                    $userId = $this->userModel->registerUser($fullName, $birthYear, $gender, $country, $city, $email, $password, $username, $profilePicture, $accountStatus, $role);
+                    if($userId!=false){
+                        $this->sendMail($email,$fullName,"http://localhost/user/activateUser?id=$userId");
+                    }else{
+                        $data["error"]=true;
+                        $this->renderer->render("create_user", $data);
+                    }
+
                 }else{
 
                     $data["error"]=true;
@@ -86,15 +96,13 @@ class UserController {
 
             if ($data["isLoggedIn"]) {
                 // El usuario ya está logeado
-
                 // Redireccionar al usuario a la página de inicio
                 $baseUrl = dirname($_SERVER['SCRIPT_NAME']);
-                // echo $baseUrl;
-                // exit();
                 header("Location: $baseUrl");
                 exit();
-                // $this->renderer->render("lobby_usuario",['dato' => true]);
             } else {
+                
+                $data['genders']=$this->userModel->getAllGenders();
                 // Mostrar la página de inicio de sesión
                 $this->renderer->render("create_user", $data);
             }
@@ -195,7 +203,8 @@ class UserController {
             exit();
         }
     
-}
+    }
+    //TODO: se necesita arreglar el front
     public function activateUser(){
         // activate_user
         if ($_SERVER['REQUEST_METHOD'] === 'GET') {
@@ -210,6 +219,68 @@ class UserController {
         }else{
             $datos["get"]=false;
             $this->renderer->render("activate_user",$datos);
+        }
+    }
+
+    private function sendMail($email,$fullName,$url){
+        try {
+            // Crear una instancia de la clase PHPMailer
+            $mail = new PHPMailer();
+
+            // Autentificación vía SMTP
+            $mail->isSMTP();
+            // Login
+            $mail->Host = "smtp.gmail.com";
+            $mail->Username = "rodrigojcosentino@gmail.com";
+            $mail->Password = "qvphjbefadhgbgjz";
+            // $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+            $mail->SMTPAuth = true;
+            $mail->Port = "465";
+            // $mail->addAttachment("/home/user/Desktop/ejemplodeimagen.png", "ejemplodeimagen.png");
+
+            //Recipients
+            $mail->setFrom("rodrigojcosentino@gmail.com", "Respuestas");
+            $mail->addAddress($email); 
+
+            $mail->CharSet = 'UTF-8';
+            $mail->Encoding = 'base64';
+            $mail->isHTML(true);
+            $mail->Subject = 'Ya casi terminamos el registro';
+            $mail->Body = '<!DOCTYPE html>
+            <html>
+            <head>
+                <title>Verificar Email</title>
+            </head>
+            <body>
+                <div style="width: 100%; background-color: #007bff; padding: 20px; text-align: center;">
+                    <h4 style="color: white; margin: 0;">Verificar Email</h4>
+                </div>
+                <div style="width: 100%; padding: 20px;">
+                    <p style="margin: 0;">¡Gracias por registrarte '.$fullName.' ! Para completar el proceso de registro, por favor haz clic en el siguiente enlace para verificar tu dirección de correo electrónico y activar tu cuenta:</p>
+                    <a href="'.$url.'" style="display: inline-block; padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px; margin-top: 10px;">Verificar Email</a>
+                    <p style="margin-top: 20px; margin-bottom: 0;">Si no has solicitado este registro, puedes ignorar este mensaje.</p>
+                </div>
+            </body>
+            </html>
+            ';
+            // $mail->AltBody = 'El texto como elemento de texto simple';
+            
+            if ($mail->send()) {
+                // El correo se envió correctamente
+                $baseUrl = dirname($_SERVER['SCRIPT_NAME']);
+                header("Location: $baseUrl");
+                exit();
+            } else {
+                // Hubo un error al enviar el correo
+                $data["error"]=true;
+                $this->renderer->render("create_user", $data);
+            }
+
+        } catch (Exception $e) {
+            echo "Message could not be sent. Mailer Error: ".$mail->ErrorInfo;
+            $data["error"]=true;
+            $this->renderer->render("create_user", $data);
         }
     }
 
