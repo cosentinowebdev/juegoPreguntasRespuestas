@@ -1,19 +1,32 @@
-    <div class="container">
-        <h1>Registro Exitoso</h1>
-        {{#dato}}
-            <div class="alert alert-success" role="alert">
-                El registro se ha realizado exitosamente.
+
+{{> header}}
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h1>Registro Exitoso</h1>
+                        {{#dato}}
+                        <div class="alert alert-success mt-4" role="alert">
+                            El registro se ha realizado exitosamente.
+                        </div>
+                        {{/dato}}
+                        {{^dato}}
+                        <div class="alert alert-warning mt-4" role="alert">
+                            Hubo un error en el registro.
+                        </div>
+                        {{/dato}}
+                        {{#get}}
+                        <div class="alert alert-warning mt-4" role="alert">
+                            No se han proporcionado los datos necesarios para el registro.
+                        </div>
+                        {{/get}}
+                        <a href="/" class="btn btn-primary mt-4">Volver</a>
+                        <a href="/login/login" class="btn btn-primary mt-4">Logearse</a>
+                    </div>
+                </div>
             </div>
-        {{/dato}}
-        {{^dato}}
-            <div class="alert alert-danger" role="alert">
-                Ha ocurrido un error durante el registro.
-            </div>
-        {{/dato}}
-        {{^get}}
-            <div class="alert alert-warning" role="alert">
-                No se han proporcionado los datos necesarios para el registro.
-            </div>
-        {{/get}}
-    </div>
-</div>
+        </div>
+    </div> 
+{{> footer}}
+

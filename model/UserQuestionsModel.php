@@ -8,9 +8,9 @@ class UserQuestionModel {
         $this->database = $database;
     }
 
-    public function createUserQuestion($userID, $questionID, $gameID) {
-        $sql = "INSERT INTO UserQuestions (UserID, QuestionID, GameID)
-                VALUES (?, ?, ?)";
+    public function createUserQuestion($userID, $questionID, $gameID,$time) {
+        $sql = "INSERT INTO UserQuestions (UserID, QuestionID, GameID, time)
+                VALUES (?, ?, ?, ?)";
         
         $stmt = $this->database->prepare($sql);
         
@@ -19,7 +19,7 @@ class UserQuestionModel {
             return false;
         }
         
-        $stmt->bind_param("iii", $userID, $questionID, $gameID);
+        $stmt->bind_param("iiii", $userID, $questionID, $gameID, $time);
         $stmt->execute();
         
         if ($stmt->affected_rows === 0) {

@@ -164,6 +164,7 @@ class UserModel {
             $stmt->close();
             return true; // Registro exitoso
         } else {
+            $stmt->close();
             return false; // Error al registrar el usuario
         }
         

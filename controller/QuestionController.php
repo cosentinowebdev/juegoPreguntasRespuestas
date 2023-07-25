@@ -39,7 +39,7 @@ class QuestionController {
         $Categories = $this->utilitiesModel->getCategories();
         $data['categories'] = $Categories;
     
-        if ($data["isLoggedIn"] && ($data["isEditor"] || $data["isAdmin"])) {
+        if ($data["isLoggedIn"] ) {
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $questionText = $_POST["questionText"];
                 $correctAnswer = $_POST["correctAnswer"];

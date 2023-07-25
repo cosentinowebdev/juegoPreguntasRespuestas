@@ -178,13 +178,18 @@ class QuestionModel {
         // Generar la parte de la consulta SQL para filtrar por la dificultad
         $difficultyCondition = "";
         if ($difficulty == "Easy" || $difficulty == "Medium" || $difficulty == "Hard") {
-            $difficultyCondition = " AND Difficulty = ?";
+            $difficultyCondition = " AND Difficulty = '$difficulty'";
         }
     
         $placeholders = rtrim(str_repeat('?,', count($leastRepeatedNumbers)), ',');
     
-        $sql = "SELECT * FROM Questions WHERE QuestionID NOT IN ($placeholders) AND StateID = 1 $difficultyCondition ORDER BY RAND() LIMIT 1";
-        
+        $sql = "SELECT q.*, c.* 
+        FROM Questions q 
+        JOIN Categories c ON q.CategoryID = c.CategoryID 
+        WHERE QuestionID NOT IN ($placeholders) 
+            AND StateID = 1 $difficultyCondition 
+        ORDER BY RAND() LIMIT 1";
+
         $stmt = $this->database->prepare($sql);
     
         // Genera el tipo de cadena para los valores de los parámetros
@@ -192,11 +197,6 @@ class QuestionModel {
         
         // Crea un array de referencias a los valores
         $params = array_merge([$types], $leastRepeatedNumbers);
-    
-        // Si se especifica una dificultad válida, agrega el valor correspondiente al array de parámetros
-        if ($difficultyCondition != "") {
-            $params[] = $difficulty;
-        }
     
         $refs = [];
         foreach ($params as $key => $value) {
@@ -210,6 +210,7 @@ class QuestionModel {
         
         $result = $stmt->get_result();
     
+        //si no hay preguntas del nivel trae cualquiera
         if ($result->num_rows == 0) {
             return $this->getRandomQuestion();
         }
@@ -303,8 +304,8 @@ class QuestionModel {
         $question = $this->getQuestionById($questionID);
         $incorrectCount = $question['IncorrectCount'];
         $correctCount = $question['CorrectCount'];
-    
         $aux =  $incorrectCount + $correctCount;
+
         if ($aux==0) {
             return "Fácil";
         }
@@ -320,6 +321,8 @@ class QuestionModel {
         }
     }
     public function changeQuestionDifficulty($questionID) {
+        // var_dump($questionID);
+        // exit();
         $sql = "UPDATE Questions SET Difficulty = ? WHERE QuestionID = ?";
         
         $stmt = $this->database->prepare($sql);

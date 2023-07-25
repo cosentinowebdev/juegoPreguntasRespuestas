@@ -19,18 +19,45 @@
                 <li class="list-group-item">Nombre : {{FullName}}</li>
                 <li class="list-group-item">Nivel : {{nivel}}</li>
             </ul>
+
         </div>
         {{/userData}}
     {{#userGame}}
         {{^isFinishResult}}  
             {{#question}}
-
+            <div class="container mt-1">
+                <div class="row justify-content-center">
+                    <div class="col-md-6">
+                        <h3 class="text-center">Tiempo de juego</h3>
+                        <div class="progress">
+                            <div id="progressBar" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <p class="text-center mt-2" id="countdown">Tiempo restante: 0 segundos</p>
+                    </div>
+                </div>
+            </div>
+            {{#dificultyDiference}}
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6 offset-md-3">
+                        <div class="card mt-1">
+                            <div class="card-header text-white" style="background-color:{{CategoryColor}}">
+                                <h2>No hay preguntas con tu dificultad</h2>
+                            </div>
+                            <p>Se selecciono una pregunta al azar</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {{/dificultyDiference}}  
                     <div class="container">
                         <div class="row">
                             <div class="col-md-6 offset-md-3">
-                                <div class="card mt-5">
+                                <div class="card mt-1">
+
                                     <div class="card-header text-white" style="background-color:{{CategoryColor}}">
-                                        Categoría: {{CategoryName}}
+                                        <p>Categoría: {{CategoryName}}</p>
+                                        <p>Dificultad: {{Difficulty}}</p>
                                     </div>
                                     <div class="card-body">
                                         <h5 class="card-title">{{QuestionText}}</h5>
@@ -45,18 +72,159 @@
                                             </ul>
                                             <input type="text" name="id" value="{{QuestionID}}" id="QuestionID" style="display:none">
                                             <button type="submit" class="btn btn-primary">Responder</button>
-                                            <a href="/game/reportQuestion?id={{QuestionID}}" target="_blank" class="btn btn-primary">Reportar pregunta</a>
+                                            
+                                            
                                         </form>
+                                        <button onclick="juego.sendReportQuestion()"  class="btn btn-primary">Reportar pregunta</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                
+                    <script>
+                        class Play {
+                            constructor(duration) {
+                                this.duration = duration;
+                                this.timerId = null;
+                                this.progressBar = document.getElementById('progressBar');
+                                this.countdownText = document.getElementById('countdown');
+                                //document.getElementById("botones").innerHTML += '<button onclick="juego.sendReportQuestion()"  class="btn btn-primary">Reportar pregunta</button>';
+                            }
+
+                            start() {
+                                let startTime = Date.now();
+                                let endTime = startTime + this.duration * 1000;
+
+                                this.timerId = setInterval(() => {
+                                    let currentTime = Date.now();
+                                    let timeLeft = endTime - currentTime;
+
+                                    if (timeLeft <= 0) {
+                                        clearInterval(this.timerId);
+                                        this.progressBar.style.width = '100%';
+                                        this.progressBar.classList.remove('bg-success');
+                                        this.progressBar.classList.add('bg-danger');
+                                        this.countdownText.textContent = 'Tiempo terminado';
+                                        setTimeout(() => {
+                                            this.sendPostRequest(); 
+                                        }, 500);
+                                        // se le dejo medio segundo para compensar los tiempos de carga
+                                    } else {
+                                        let progress = 100 - (timeLeft / this.duration / 10);
+                                        this.progressBar.style.width = progress + '%';
+                                        
+                                        if (progress >= 40 && progress <= 70) {
+                                            this.progressBar.classList.remove('bg-success');
+                                            this.progressBar.classList.add('bg-warning');
+                                        } else if(progress > 70){
+                                            this.progressBar.classList.remove('bg-warning');
+                                            this.progressBar.classList.add('bg-danger');
+                                        }
+                                        else {
+                                            this.progressBar.classList.remove('bg-warning');
+                                            this.progressBar.classList.add('bg-success');
+                                        }
+                                        this.countdownText.textContent = Math.ceil(timeLeft / 1000) + ' segundos restantes';
+                                    }
+                                }, 100);
+                            }
+
+                            stop() {
+                                clearInterval(this.timerId);
+                            }
+                            sendPostRequest() {
+                                const url = '/game/play'; 
+                                const form = document.createElement('form');
+                                form.method = 'post';
+                                form.action = url;
+
+                                const userResponseInput = document.createElement('input');
+                                userResponseInput.type = 'hidden';
+                                userResponseInput.name = 'userResponse';
+                                userResponseInput.value = 'false';
+                                form.appendChild(userResponseInput);
+
+                                const idInput = document.createElement('input');
+                                idInput.type = 'hidden';
+                                idInput.name = 'id';
+                                idInput.value = '{{QuestionID}}'; 
+                                form.appendChild(idInput);
+
+                                document.body.appendChild(form);
+                                form.submit();
+                            }
+                            sendReportQuestion() {
+                                const urlReport = '/game/reportQuestion?id={{QuestionID}}'; 
+                                window.open(urlReport, '_blank');
+                                //cuando reporta pregunta refrescar mediante un post el juego y abrir formulario de respuesta reportada
+                                const url = '/game/play'; 
+                                const form = document.createElement('form');
+                                form.method = 'post';
+                                form.action = url;
+
+                                const userReplayInput = document.createElement('input');
+                                userReplayInput.type = 'hidden';
+                                userReplayInput.name = 'userReplay';
+                                userReplayInput.value = 'true';
+                                form.appendChild(userReplayInput);
+
+                                const idInput = document.createElement('input');
+                                idInput.type = 'hidden';
+                                idInput.name = 'id';
+                                idInput.value = '{{QuestionID}}'; 
+                                form.appendChild(idInput);
+
+                                document.body.appendChild(form);
+                                form.submit();
+                            }
+                        }
+
+                        const countdownDuration = {{time}}; // trae la cantidad de segundos del backend
+                        const juego = new Play(countdownDuration);
+                        if(juego.progressBar != null){
+                            juego.start();
+                        }
+                    </script>
             {{/question}}
         {{/isFinishResult}}
-
-        
+    {{#cheat}}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <div class="card mt-1">
+                    <div class="card-header text-white" style="background-color:red">
+                        <h2>Te estas portando mal seras castigade</h2>
+                    </div>
+                    <p>La partida se perdio por refrescar la pagina, no lo vuelvas a hacer</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{/cheat}}
+    {{#tiempo}}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <div class="card mt-1">
+                    <div class="card-header text-white" style="background-color:yellow">
+                        <h2>Se acabo el tiempo</h2>
+                    </div>
+                    <p>La partida se perdio por que se acabo el tiempo, animos la proxima</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{/tiempo}}
+      
+    {{#isFinishResult}} 
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 offset-md-3 mt-3">
+                    <h2>Fin del juego</h2>
+                </div>
+            </div>
+        </div>
+    {{/isFinishResult}} 
 
     <div class="container">
         <div class="row">
@@ -88,4 +256,5 @@
 
 <!-- End Page Content -->
 </div>
+
 {{> footer}}

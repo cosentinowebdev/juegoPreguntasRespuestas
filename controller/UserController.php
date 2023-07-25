@@ -160,8 +160,9 @@ class UserController {
 
             $userData = $this->userModel->getUserById($data["userId"]);
             $data["userData"]= $userData;
-
-            if ($data["isLoggedIn"] && $data["userId"]) {
+        // var_dump($data);
+        // exit();
+            if ($data["isLoggedIn"]) {
                 // El usuario ya está logeado
                 // Mostrar la página de inicio de sesión
                 $this->renderer->render("lobby_usuario", $data);
@@ -207,13 +208,13 @@ class UserController {
     //TODO: se necesita arreglar el front
     public function activateUser(){
         // activate_user
-        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+        if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['id'])) {
             $userID = $_GET['id'];
             if($this->userModel->activateUser($userID)){
                 $datos["dato"]=true;
                 $this->renderer->render("activate_user",$datos);
             }else{
-                $datos["dato"]=false;
+                $datos["get"]=true;
                 $this->renderer->render("activate_user",$datos);
             }
         }else{
