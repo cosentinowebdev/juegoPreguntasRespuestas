@@ -15,17 +15,24 @@ class Graficos{
     
         $datay=$data["playersCount"];
 
-        
+        // Obtener los valores mínimo y máximo del eje Y
+        $minY = min($datay);
+        $maxY = max($datay);
+
+        // Calcular los valores para el eje Y
+        $yStart = floor($minY / 5) * 5;
+        $yEnd = ceil($maxY / 5) * 5;
+
         // Create the graph. These two calls are always required
         $graph = new Graph(350,220,'auto');
-        $graph->SetScale("textlin");
+        $graph->SetScale("textlin", $yStart, $yEnd); // Utilizar valores mínimo y máximo para el eje Y
 
         //$theme_class="DefaultTheme";
         //$graph->SetTheme(new $theme_class());
 
         // set major and minor tick positions manually
-        $graph->yaxis->SetTickPositions(array(0,5,10), array(5,7,12));
-        $graph->SetBox(false);
+        // $graph->yaxis->SetTickPositions(array(0,5,10), array(5,7,12));
+        // $graph->SetBox(false);
 
         //$graph->ygrid->SetColor('gray');
         $graph->ygrid->SetFill(false);
