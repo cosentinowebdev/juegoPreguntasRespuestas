@@ -6,6 +6,7 @@
 
     <div class="container">
         <h1>Lista de Categorias</h1>
+        <a href="/question/new_categories" class="btn btn-primary" > Nueva categoria </a>
             <table class="table table-striped">
             <thead>
                 <tr>
@@ -22,7 +23,7 @@
                     
                 </td>
                 <td>
-                    <a href="#" onclick="alert('no se puede eliminar papu, es pegriloso')" class="btn btn-primary" > Eliminar </a>
+                    <a href="/question/edit_categories?CategoryID={{CategoryID}}" class="btn btn-primary" > Editar </a>
                 </td>
                 </tr>
                 {{/categories}}
@@ -36,7 +37,8 @@
     <!-- Contenido específico para el rol de Admin -->
     {{> header_admin}}
     <div class="container">
-        <h1>Lista de Preguntas</h1>
+        <h1>Lista de Categorias</h1>
+        <a href="/question/new_categories" class="btn btn-primary" > Nueva categoria </a>
         <table class="table table-striped">
         <thead>
             <tr>
@@ -53,7 +55,7 @@
                 
             </td>
             <td>
-                <a href="#" onclick="alert('no se puede eliminar papu, es pegriloso')" class="btn btn-primary" > Eliminar </a>
+                <a href="/question/edit_categories?CategoryID={{CategoryID}}" class="btn btn-primary" > Editar </a>
             </td>
             </tr>
             {{/categories}}

@@ -172,6 +172,57 @@ class QuestionController {
             exit();
         }
     }
+    public function edit_categories(){
+        $data = $this->session->getData();
+        if ($data["isLoggedIn"] && ($data["isEditor"] || $data["isAdmin"])) {
+            if($_SERVER['REQUEST_METHOD'] === 'GET'){
+                $categoryId = $_GET['CategoryID'];
+                $data['categorie'] = $this->utilitiesModel->getCategorie($categoryId)[0];
+                $this->renderer->render("edit_categories", $data);
+            } else if($_SERVER['REQUEST_METHOD'] === 'POST'){
+                $status = $this->utilitiesModel->updateCategory($_POST["CategoryID"],$_POST["CategoryName"],$_POST["CategoryColor"]);
+                if($status){
+                    $data['work']=true;
+                }else{
+                    $data['error']=true;
+                }
+                $categoryId = $_POST['CategoryID'];
+                $data['categorie'] = $this->utilitiesModel->getCategorie($categoryId)[0];
+                $this->renderer->render("edit_categories", $data);
+            }    
+            
+        } else {
+
+            $baseUrl = dirname($_SERVER['SCRIPT_NAME']);
+            $baseUrl= $baseUrl."user/lobby";
+            header("Location: $baseUrl");
+            exit();
+        }
+    }
+    public function new_categories(){
+        $data = $this->session->getData();
+        if ($data["isLoggedIn"] && ($data["isEditor"] || $data["isAdmin"])) {
+            if($_SERVER['REQUEST_METHOD'] === 'POST'){
+                $status = $this->utilitiesModel->createCategory($_POST["CategoryName"],$_POST["CategoryColor"]);
+                if($status){
+                    $data['work']=true;
+                }else{
+                    $data['error']=true;
+                }
+                $data['categorie'] = $this->utilitiesModel->getLastCategorie();
+                $this->renderer->render("edit_categories", $data);
+            }else{
+                $this->renderer->render("new_categories", $data);
+            }    
+            
+        } else {
+
+            $baseUrl = dirname($_SERVER['SCRIPT_NAME']);
+            $baseUrl= $baseUrl."user/lobby";
+            header("Location: $baseUrl");
+            exit();
+        }
+    }
     public function list_reported(){
         $reportedQuestionsData = $this->reportedQuestionModel->listReportedQuestions();
 

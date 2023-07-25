@@ -1,0 +1,46 @@
+{{#isEditor}}
+    {{> header_editor}}
+{{/isEditor}}
+
+{{#isAdmin}}
+    {{> header_admin}}
+{{/isAdmin}}
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Editar Categoría</h2>
+                    </div>
+                    <div class="card-body">
+                        <form action="/question/new_categories" method="post">
+                            <input type="hidden" name="CategoryID" value="{{CategoryID}}">
+                            <div class="form-group">
+                                <label for="CategoryName">Nombre de la Categoría:</label>
+                                <input type="text" class="form-control" name="CategoryName" >
+                            </div>
+                            <div class="form-group">
+                                <label for="CategoryColor">Color de la Categoría:</label>
+                                <input type="color" class="form-control" name="CategoryColor" >
+                            </div>
+                            <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                        </form>
+                    </div>
+                    <div class="card-footer">
+                        {{#work}}
+                            <p>funciono</p>
+                        {{/work}}
+                        {{#error}}
+                            <p>no funciono</p>
+                        {{/error}}
+                        <hr>
+                        {{^work}}
+                            <a href="/question/list_categories" class="btn btn-primary" > Volver </a>
+                        {{/work}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{{> footer}}
