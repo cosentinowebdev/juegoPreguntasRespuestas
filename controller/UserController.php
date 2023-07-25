@@ -160,8 +160,6 @@ class UserController {
 
             $userData = $this->userModel->getUserById($data["userId"]);
             $data["userData"]= $userData;
-        // var_dump($data);
-        // exit();
             if ($data["isLoggedIn"]) {
                 // El usuario ya está logeado
                 // Mostrar la página de inicio de sesión
